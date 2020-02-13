@@ -1,0 +1,15 @@
+{
+    "backend": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-freefoodapp-backend-01024-authRole",
+            "UnauthRoleArn": "arn:aws:iam::552152877749:role/amplify-freefoodapp-backend-01024-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::552152877749:role/amplify-freefoodapp-backend-01024-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "amplify-freefoodapp-backend-01024-deployment",
+            "UnauthRoleName": "amplify-freefoodapp-backend-01024-unauthRole",
+            "StackName": "amplify-freefoodapp-backend-01024",
+            "StackId": "arn:aws:cloudformation:us-east-1:552152877749:stack/amplify-freefoodapp-backend-01024/27d5fef0-4e1f-11ea-a070-0ece9c9311f7",
+            "AmplifyAppId": "d98f72rs9pqz"
+        }
+    }
+}
