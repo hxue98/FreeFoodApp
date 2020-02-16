@@ -1,18 +1,42 @@
 import React, { Component } from 'react';
+import { Alert, TextInput, Dimensions, StyleSheet, View, Button } from 'react-native';
 
-function submitComment(comment) {
-    console.log('successfully sent: ' + comment);
-}
+export default class CommentInputComponent extends Component {
 
-class CommentInputComponent extends Component {
+    state = {
+        commentText: ""
+    }
+
     render() {
         return (
-            <div id="CommentInputTextField" className="verticalContainer">
-                <textarea id="CommentInput" onInput={(event) => this.setState({ text: event.currentTarget.value })}></textarea>
-                <button onClick={() => submitComment(comment)}>Send</button>
-            </div>
+            <View style={styles.container}>
+                <TextInput style={styles.input} onChangeText={text => this.state.commentText = text}/>
+                <Button title="Submit" style={styles.btn} onPress={() => Alert.alert(null, this.state.commentText)} />
+            </View>
         );
     }
 }
 
-export default CommentInputComponent;
+const window = Dimensions.get('window');
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        flexDirection: 'row',
+        maxHeight: 35,
+        alignSelf: 'flex-end',
+        marginTop: 5,
+        marginBottom: 5,
+        marginLeft: 5,
+        marginRight: 5
+    },
+    btn: {
+        borderRadius: 10,
+    },
+    input: {
+        width: window.width - 80,
+        height: 35,
+        borderColor: 'black',
+        borderBottomWidth: 1,
+        marginRight: 3
+    }
+});

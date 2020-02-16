@@ -1,11 +1,18 @@
 import React, { Component } from 'react';
 
-class CommentLineComponent extends Component {
+export default class CommentLineComponent extends Component {
     render () {
         return (
-            <div></div>
+            <View style={styles.container}>
+
+            </View>
         );
     }
 }
 
-export default CommentLineComponent;
+const window = Dimensions.get('window');
+const styles = StyleSheet.create({
+    container: {
+
+    }
+});
