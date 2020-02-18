@@ -1,5 +1,142 @@
-type Todo @model {
-  id: ID!
-  name: String!
-  description: String
+type Comment {
+	id: String!
+	userId: String!
+	text: String!
+	date: AWSTimestamp!
+	upvote: Int
+	downvote: Int
+}
+
+type CommentConnection {
+	items: [Comment]
+	nextToken: String
+}
+
+input CreateCommentInput {
+	userId: String!
+	text: String!
+	date: AWSTimestamp!
+	upvote: Int
+	downvote: Int
+}
+
+input DeleteCommentInput {
+	id: String!
+}
+
+type Mutation {
+	createComment(input: CreateCommentInput!): Comment
+	updateComment(input: UpdateCommentInput!): Comment
+	deleteComment(input: DeleteCommentInput!): Comment
+}
+
+type Query {
+	getComment(id: String!): Comment
+	listComments(filter: TableCommentFilterInput, limit: Int, nextToken: String): CommentConnection
+}
+
+type Subscription {
+	onCreateComment(
+		id: String,
+		userId: String,
+		text: String,
+		date: AWSTimestamp,
+		upvote: Int
+	): Comment
+		@aws_subscribe(mutations: ["createComment"])
+	onUpdateComment(
+		id: String,
+		userId: String,
+		text: String,
+		date: AWSTimestamp,
+		upvote: Int
+	): Comment
+		@aws_subscribe(mutations: ["updateComment"])
+	onDeleteComment(
+		id: String,
+		userId: String,
+		text: String,
+		date: AWSTimestamp,
+		upvote: Int
+	): Comment
+		@aws_subscribe(mutations: ["deleteComment"])
+}
+
+input TableBooleanFilterInput {
+	ne: Boolean
+	eq: Boolean
+}
+
+input TableCommentFilterInput {
+	id: TableStringFilterInput
+	userId: TableStringFilterInput
+	text: TableStringFilterInput
+	date: TableStringFilterInput
+	upvote: TableIntFilterInput
+	downvote: TableIntFilterInput
+}
+
+input TableFloatFilterInput {
+	ne: Float
+	eq: Float
+	le: Float
+	lt: Float
+	ge: Float
+	gt: Float
+	contains: Float
+	notContains: Float
+	between: [Float]
+}
+
+input TableIDFilterInput {
+	ne: ID
+	eq: ID
+	le: ID
+	lt: ID
+	ge: ID
+	gt: ID
+	contains: ID
+	notContains: ID
+	between: [ID]
+	beginsWith: ID
+}
+
+input TableIntFilterInput {
+	ne: Int
+	eq: Int
+	le: Int
+	lt: Int
+	ge: Int
+	gt: Int
+	contains: Int
+	notContains: Int
+	between: [Int]
+}
+
+input TableStringFilterInput {
+	ne: String
+	eq: String
+	le: String
+	lt: String
+	ge: String
+	gt: String
+	contains: String
+	notContains: String
+	between: [String]
+	beginsWith: String
+}
+
+input UpdateCommentInput {
+	id: String!
+	userId: String
+	text: String
+	date: AWSTimestamp
+	upvote: Int
+	downvote: Int
+}
+
+schema {
+	query: Query
+	mutation: Mutation
+	subscription: Subscription
 }

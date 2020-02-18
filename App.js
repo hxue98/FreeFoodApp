@@ -2,18 +2,13 @@ import React, { useEffect, useReducer } from 'react'
 import { StyleSheet, Text, View, Button } from 'react-native';
 import API, { graphqlOperation } from '@aws-amplify/api'
 import PubSub from '@aws-amplify/pubsub';
-//import { createTodo } from './src/graphql/mutations';
+import config from './aws-exports'
 
 import CommentInputComponent from './src/components/Comment/CommentInputComponent';
+import CommentComponent from './src/components/Comment/CommentComponent';
 
-import config from './aws-exports'
 API.configure(config)             // Configure Amplify
 PubSub.configure(config)
-
-// async function createNewTodo() {
-//   const todo = { name: "Use AppSync" , description: "Realtime and Offline"}
-//   await API.graphql(graphqlOperation(createTodo, { input: todo }))
-// }
 
 export default function App() {
   // const [state, dispatch] = useReducer(reducer, initialState)
@@ -29,19 +24,19 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <CommentInputComponent />
+      <CommentComponent />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
    container: {
-     backgroundColor: '#ddeeff',
+     backgroundColor: '#ffffff',
      alignItems: 'center',
      justifyContent: 'center',
      flex: 1
    }
- });
+});
 
 //  // other imports
 // import { listTodos } from './src/graphql/queries';

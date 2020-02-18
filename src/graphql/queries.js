@@ -1,26 +1,32 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const getTodo = /* GraphQL */ `
-  query GetTodo($id: ID!) {
-    getTodo(id: $id) {
+export const getComment = /* GraphQL */ `
+  query GetComment($id: String!) {
+    getComment(id: $id) {
       id
-      name
-      description
+      userId
+      text
+      date
+      upvote
+      downvote
     }
   }
 `;
-export const listTodos = /* GraphQL */ `
-  query ListTodos(
-    $filter: ModelTodoFilterInput
+export const listComments = /* GraphQL */ `
+  query ListComments(
+    $filter: TableCommentFilterInput
     $limit: Int
     $nextToken: String
   ) {
-    listTodos(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    listComments(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        name
-        description
+        userId
+        text
+        date
+        upvote
+        downvote
       }
       nextToken
     }
