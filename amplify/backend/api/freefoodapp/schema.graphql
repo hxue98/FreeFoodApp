@@ -1,5 +1,6 @@
 type Comment {
 	id: String!
+  	eventId: String!
 	userId: String!
 	text: String!
 	date: AWSTimestamp!
@@ -13,6 +14,7 @@ type CommentConnection {
 }
 
 input CreateCommentInput {
+  	eventId: String!
 	userId: String!
 	text: String!
 	date: AWSTimestamp!
@@ -38,26 +40,26 @@ type Query {
 type Subscription {
 	onCreateComment(
 		id: String,
+    	eventId: String!
 		userId: String,
 		text: String,
-		date: AWSTimestamp,
-		upvote: Int
+		date: AWSTimestamp
 	): Comment
 		@aws_subscribe(mutations: ["createComment"])
 	onUpdateComment(
 		id: String,
+    	eventId: String!
 		userId: String,
 		text: String,
-		date: AWSTimestamp,
-		upvote: Int
+		date: AWSTimestamp
 	): Comment
 		@aws_subscribe(mutations: ["updateComment"])
 	onDeleteComment(
 		id: String,
+    	eventId: String!
 		userId: String,
 		text: String,
-		date: AWSTimestamp,
-		upvote: Int
+		date: AWSTimestamp
 	): Comment
 		@aws_subscribe(mutations: ["deleteComment"])
 }
@@ -69,6 +71,7 @@ input TableBooleanFilterInput {
 
 input TableCommentFilterInput {
 	id: TableStringFilterInput
+  	eventId: TableStringFilterInput
 	userId: TableStringFilterInput
 	text: TableStringFilterInput
 	date: TableStringFilterInput
@@ -128,15 +131,10 @@ input TableStringFilterInput {
 
 input UpdateCommentInput {
 	id: String!
+	eventId: String
 	userId: String
 	text: String
 	date: AWSTimestamp
 	upvote: Int
 	downvote: Int
-}
-
-schema {
-	query: Query
-	mutation: Mutation
-	subscription: Subscription
 }

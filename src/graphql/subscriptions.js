@@ -4,19 +4,20 @@
 export const onCreateComment = /* GraphQL */ `
   subscription OnCreateComment(
     $id: String
+    $eventId: String!
     $userId: String
     $text: String
     $date: AWSTimestamp
-    $upvote: Int
   ) {
     onCreateComment(
       id: $id
+      eventId: $eventId
       userId: $userId
       text: $text
       date: $date
-      upvote: $upvote
     ) {
       id
+      eventId
       userId
       text
       date
@@ -28,19 +29,20 @@ export const onCreateComment = /* GraphQL */ `
 export const onUpdateComment = /* GraphQL */ `
   subscription OnUpdateComment(
     $id: String
+    $eventId: String!
     $userId: String
     $text: String
     $date: AWSTimestamp
-    $upvote: Int
   ) {
     onUpdateComment(
       id: $id
+      eventId: $eventId
       userId: $userId
       text: $text
       date: $date
-      upvote: $upvote
     ) {
       id
+      eventId
       userId
       text
       date
@@ -52,19 +54,20 @@ export const onUpdateComment = /* GraphQL */ `
 export const onDeleteComment = /* GraphQL */ `
   subscription OnDeleteComment(
     $id: String
+    $eventId: String!
     $userId: String
     $text: String
     $date: AWSTimestamp
-    $upvote: Int
   ) {
     onDeleteComment(
       id: $id
+      eventId: $eventId
       userId: $userId
       text: $text
       date: $date
-      upvote: $upvote
     ) {
       id
+      eventId
       userId
       text
       date

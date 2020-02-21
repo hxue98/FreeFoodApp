@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { Alert, TextInput, Dimensions, StyleSheet, View, Button } from 'react-native';
-import API, { graphqlOperation } from '@aws-amplify/api'
-import { createComment } from '../../graphql/mutations'
+import { TextInput, Dimensions, StyleSheet, View, Button } from 'react-native';
+import API, { graphqlOperation } from '@aws-amplify/api';
+import { createComment } from '../../graphql/mutations';
 
-async function createNewComment(userId, text, date) {
+//TODO - replace hardcoded eventId/userId
+async function createNewComment(userId, eventId, text, date) {
     const comment = {
+        eventId: '123',
         userId: '123',
         text: text,
         date: date,
@@ -16,9 +18,13 @@ async function createNewComment(userId, text, date) {
 
 export default class CommentInputComponent extends Component {
 
-    state = {
-        commentText: ""
-    };
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            commentText: ""
+        };
+    }
 
     render() {
         return (
@@ -31,7 +37,7 @@ export default class CommentInputComponent extends Component {
                 <Button
                     title="Submit"
                     style={styles.btn}
-                    onPress={() => { createNewComment(null, this.state.commentText, Date.now()); this.setState({commentText: ""})}} />
+                    onPress={() => { createNewComment(null, null, this.state.commentText, Date.now()); this.setState({commentText: ""}); this.props.refreshComments();}} />
             </View>
         );
     }
@@ -54,9 +60,10 @@ const styles = StyleSheet.create({
     },
     input: {
         width: window.width - 80,
-        height: 35,
+        height: 40,
         borderColor: 'black',
         borderBottomWidth: 1,
+        borderColor: '#a6a6a6',
         marginRight: 3
     }
 });

@@ -5,6 +5,7 @@ export const getComment = /* GraphQL */ `
   query GetComment($id: String!) {
     getComment(id: $id) {
       id
+      eventId
       userId
       text
       date
@@ -22,6 +23,7 @@ export const listComments = /* GraphQL */ `
     listComments(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
+        eventId
         userId
         text
         date
