@@ -1,6 +1,6 @@
 type Comment {
 	id: String!
-  	eventId: String!
+	eventId: String!
 	userId: String!
 	text: String!
 	date: AWSTimestamp!
@@ -14,10 +14,22 @@ type CommentConnection {
 }
 
 input CreateCommentInput {
-  	eventId: String!
+	eventId: String!
 	userId: String!
 	text: String!
 	date: AWSTimestamp!
+	upvote: Int
+	downvote: Int
+}
+
+input CreateEventInput {
+	eventId: String!
+	posterId: String!
+	longitude: Float!
+	latitude: Float!
+	startTime: AWSTimestamp!
+	endTime: AWSTimestamp!
+	description: String
 	upvote: Int
 	downvote: Int
 }
@@ -26,21 +38,47 @@ input DeleteCommentInput {
 	id: String!
 }
 
+input DeleteEventInput {
+	eventId: String!
+}
+
+type Event {
+	eventId: String!
+	posterId: String!
+	longitude: Float!
+	latitude: Float!
+	startTime: AWSTimestamp!
+	endTime: AWSTimestamp!
+	description: String
+	upvote: Int
+	downvote: Int
+}
+
+type EventConnection {
+	items: [Event]
+	nextToken: String
+}
+
 type Mutation {
 	createComment(input: CreateCommentInput!): Comment
 	updateComment(input: UpdateCommentInput!): Comment
 	deleteComment(input: DeleteCommentInput!): Comment
+	createEvent(input: CreateEventInput!): Event
+	updateEvent(input: UpdateEventInput!): Event
+	deleteEvent(input: DeleteEventInput!): Event
 }
 
 type Query {
 	getComment(id: String!): Comment
 	listComments(filter: TableCommentFilterInput, limit: Int, nextToken: String): CommentConnection
+	getEvent(eventId: String!): Event
+	listEvents(filter: TableEventFilterInput, limit: Int, nextToken: String): EventConnection
 }
 
 type Subscription {
 	onCreateComment(
 		id: String,
-    	eventId: String!
+		eventId: String!,
 		userId: String,
 		text: String,
 		date: AWSTimestamp
@@ -48,20 +86,42 @@ type Subscription {
 		@aws_subscribe(mutations: ["createComment"])
 	onUpdateComment(
 		id: String,
-    	eventId: String!
-		userId: String,
-		text: String,
-		date: AWSTimestamp
+		upvote: Int,
+		downvote: Int
 	): Comment
 		@aws_subscribe(mutations: ["updateComment"])
 	onDeleteComment(
 		id: String,
-    	eventId: String!
+		eventId: String!,
 		userId: String,
 		text: String,
 		date: AWSTimestamp
 	): Comment
 		@aws_subscribe(mutations: ["deleteComment"])
+	onCreateEvent(
+		eventId: String,
+		posterId: String,
+		longitude: Float,
+		latitude: Float,
+		startTime: AWSTimestamp
+	): Event
+		@aws_subscribe(mutations: ["createEvent"])
+	onUpdateEvent(
+		eventId: String,
+		posterId: String,
+		longitude: Float,
+		latitude: Float,
+		startTime: AWSTimestamp
+	): Event
+		@aws_subscribe(mutations: ["updateEvent"])
+	onDeleteEvent(
+		eventId: String,
+		posterId: String,
+		longitude: Float,
+		latitude: Float,
+		startTime: AWSTimestamp
+	): Event
+		@aws_subscribe(mutations: ["deleteEvent"])
 }
 
 input TableBooleanFilterInput {
@@ -71,10 +131,22 @@ input TableBooleanFilterInput {
 
 input TableCommentFilterInput {
 	id: TableStringFilterInput
-  	eventId: TableStringFilterInput
+	eventId: TableStringFilterInput
 	userId: TableStringFilterInput
 	text: TableStringFilterInput
 	date: TableStringFilterInput
+	upvote: TableIntFilterInput
+	downvote: TableIntFilterInput
+}
+
+input TableEventFilterInput {
+	eventId: TableStringFilterInput
+	posterId: TableStringFilterInput
+	longitude: TableFloatFilterInput
+	latitude: TableFloatFilterInput
+	startTime: TableIntFilterInput
+	endTime: TableIntFilterInput
+	description: TableStringFilterInput
 	upvote: TableIntFilterInput
 	downvote: TableIntFilterInput
 }
@@ -131,10 +203,18 @@ input TableStringFilterInput {
 
 input UpdateCommentInput {
 	id: String!
-	eventId: String
-	userId: String
-	text: String
-	date: AWSTimestamp
+	upvote: Int
+	downvote: Int
+}
+
+input UpdateEventInput {
+	eventId: String!
+	posterId: String
+	longitude: Float
+	latitude: Float
+	startTime: AWSTimestamp
+	endTime: AWSTimestamp
+	description: String
 	upvote: Int
 	downvote: Int
 }

@@ -40,3 +40,48 @@ export const deleteComment = /* GraphQL */ `
     }
   }
 `;
+export const createEvent = /* GraphQL */ `
+  mutation CreateEvent($input: CreateEventInput!) {
+    createEvent(input: $input) {
+      eventId
+      posterId
+      longitude
+      latitude
+      startTime
+      endTime
+      description
+      upvote
+      downvote
+    }
+  }
+`;
+export const updateEvent = /* GraphQL */ `
+  mutation UpdateEvent($input: UpdateEventInput!) {
+    updateEvent(input: $input) {
+      eventId
+      posterId
+      longitude
+      latitude
+      startTime
+      endTime
+      description
+      upvote
+      downvote
+    }
+  }
+`;
+export const deleteEvent = /* GraphQL */ `
+  mutation DeleteEvent($input: DeleteEventInput!) {
+    deleteEvent(input: $input) {
+      eventId
+      posterId
+      longitude
+      latitude
+      startTime
+      endTime
+      description
+      upvote
+      downvote
+    }
+  }
+`;

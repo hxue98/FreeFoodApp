@@ -34,3 +34,40 @@ export const listComments = /* GraphQL */ `
     }
   }
 `;
+export const getEvent = /* GraphQL */ `
+  query GetEvent($eventId: String!) {
+    getEvent(eventId: $eventId) {
+      eventId
+      posterId
+      longitude
+      latitude
+      startTime
+      endTime
+      description
+      upvote
+      downvote
+    }
+  }
+`;
+export const listEvents = /* GraphQL */ `
+  query ListEvents(
+    $filter: TableEventFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listEvents(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        eventId
+        posterId
+        longitude
+        latitude
+        startTime
+        endTime
+        description
+        upvote
+        downvote
+      }
+      nextToken
+    }
+  }
+`;
