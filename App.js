@@ -9,6 +9,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import CommentComponent from './src/components/Comment/CommentComponent';
 import LocationDetailComponent from './src/components/LocationDetail/LocationDetailComponent';
+import MapsComponent from './src/components/Maps/MapsComponent'
 
 API.configure(config)             // Configure Amplify
 PubSub.configure(config)
@@ -20,6 +21,10 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen
+          name="Free Food Map"
+          component={MapsComponent}
+        />
         <Stack.Screen
           name="Detail"
           component={LocationDetailComponent}

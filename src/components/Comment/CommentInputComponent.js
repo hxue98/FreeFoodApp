@@ -5,6 +5,9 @@ import { createComment } from '../../graphql/mutations';
 
 //TODO - replace hardcoded eventId/userId
 async function createNewComment(userId, eventId, text, date) {
+    if (text == "") {
+        return;
+    }
     const comment = {
         eventId: '123',
         userId: '123',

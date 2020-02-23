@@ -50,7 +50,6 @@ export default class CommentComponent extends Component {
                                 date={new Date(item.date).toLocaleTimeString() + ' ' + new Date(item.date).toLocaleDateString()}
                                 upvote={item.upvote}
                                 downvote={item.downvote}
-                                refreshComments={this.refreshComments}
                             />
                         </View>
                     )}
@@ -59,7 +58,7 @@ export default class CommentComponent extends Component {
                 />
                 <CommentInputComponent refreshComments={this.refreshComments} style={styles.input}/>
             </View>
-            : <ActivityIndicator size="large" color="#0000ff" />
+            : <ActivityIndicator size="large" color="#0000ff"/>
 
         return (
             <View style={styles.container}>
