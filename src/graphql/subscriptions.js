@@ -3,145 +3,169 @@
 
 export const onCreateComment = /* GraphQL */ `
   subscription OnCreateComment(
-    $id: String
-    $eventId: String!
-    $userId: String
-    $text: String
     $date: AWSTimestamp
+    $eventId: String!
+    $id: String
+    $text: String
+    $userId: String
   ) {
     onCreateComment(
-      id: $id
-      eventId: $eventId
-      userId: $userId
-      text: $text
       date: $date
-    ) {
-      id
-      eventId
-      userId
-      text
-      date
-      upvote
-      downvote
-    }
-  }
-`;
-export const onUpdateComment = /* GraphQL */ `
-  subscription OnUpdateComment($id: String, $upvote: Int, $downvote: Int) {
-    onUpdateComment(id: $id, upvote: $upvote, downvote: $downvote) {
-      id
-      eventId
-      userId
-      text
-      date
-      upvote
-      downvote
-    }
-  }
-`;
-export const onDeleteComment = /* GraphQL */ `
-  subscription OnDeleteComment(
-    $id: String
-    $eventId: String!
-    $userId: String
-    $text: String
-    $date: AWSTimestamp
-  ) {
-    onDeleteComment(
-      id: $id
       eventId: $eventId
-      userId: $userId
+      id: $id
       text: $text
-      date: $date
+      userId: $userId
     ) {
-      id
-      eventId
-      userId
-      text
       date
-      upvote
       downvote
+      eventId
+      id
+      text
+      upvote
+      userId
     }
   }
 `;
 export const onCreateEvent = /* GraphQL */ `
   subscription OnCreateEvent(
     $eventId: String
-    $posterId: String
-    $longitude: Float
     $latitude: Float
+    $longitude: Float
+    $posterId: String
     $startTime: AWSTimestamp
   ) {
     onCreateEvent(
       eventId: $eventId
-      posterId: $posterId
-      longitude: $longitude
       latitude: $latitude
+      longitude: $longitude
+      posterId: $posterId
       startTime: $startTime
     ) {
-      eventId
-      posterId
-      longitude
-      latitude
-      startTime
-      endTime
       description
-      upvote
       downvote
+      endTime
+      eventId
+      latitude
+      longitude
+      posterId
+      startTime
+      upvote
     }
   }
 `;
-export const onUpdateEvent = /* GraphQL */ `
-  subscription OnUpdateEvent(
-    $eventId: String
-    $posterId: String
-    $longitude: Float
-    $latitude: Float
-    $startTime: AWSTimestamp
+export const onDeleteComment = /* GraphQL */ `
+  subscription OnDeleteComment(
+    $date: AWSTimestamp
+    $eventId: String!
+    $id: String
+    $text: String
+    $userId: String
   ) {
-    onUpdateEvent(
+    onDeleteComment(
+      date: $date
       eventId: $eventId
-      posterId: $posterId
-      longitude: $longitude
-      latitude: $latitude
-      startTime: $startTime
+      id: $id
+      text: $text
+      userId: $userId
     ) {
-      eventId
-      posterId
-      longitude
-      latitude
-      startTime
-      endTime
-      description
-      upvote
+      date
       downvote
+      eventId
+      id
+      text
+      upvote
+      userId
     }
   }
 `;
 export const onDeleteEvent = /* GraphQL */ `
   subscription OnDeleteEvent(
     $eventId: String
-    $posterId: String
-    $longitude: Float
     $latitude: Float
+    $longitude: Float
+    $posterId: String
     $startTime: AWSTimestamp
   ) {
     onDeleteEvent(
       eventId: $eventId
-      posterId: $posterId
-      longitude: $longitude
       latitude: $latitude
+      longitude: $longitude
+      posterId: $posterId
       startTime: $startTime
     ) {
-      eventId
-      posterId
-      longitude
-      latitude
-      startTime
-      endTime
       description
-      upvote
       downvote
+      endTime
+      eventId
+      latitude
+      longitude
+      posterId
+      startTime
+      upvote
+    }
+  }
+`;
+export const onUpdateComment = /* GraphQL */ `
+  subscription OnUpdateComment($downvote: Int, $id: String, $upvote: Int) {
+    onUpdateComment(downvote: $downvote, id: $id, upvote: $upvote) {
+      date
+      downvote
+      eventId
+      id
+      text
+      upvote
+      userId
+    }
+  }
+`;
+export const onUpdateEvent = /* GraphQL */ `
+  subscription OnUpdateEvent(
+    $eventId: String
+    $latitude: Float
+    $longitude: Float
+    $posterId: String
+    $startTime: AWSTimestamp
+  ) {
+    onUpdateEvent(
+      eventId: $eventId
+      latitude: $latitude
+      longitude: $longitude
+      posterId: $posterId
+      startTime: $startTime
+    ) {
+      description
+      downvote
+      endTime
+      eventId
+      latitude
+      longitude
+      posterId
+      startTime
+      upvote
+    }
+  }
+`;
+export const onCreateAccount = /* GraphQL */ `
+  subscription OnCreateAccount($userId: String, $password: String) {
+    onCreateAccount(userId: $userId, password: $password) {
+      userId
+      password
+    }
+  }
+`;
+export const onUpdateAccount = /* GraphQL */ `
+  subscription OnUpdateAccount($userId: String, $password: String) {
+    onUpdateAccount(userId: $userId, password: $password) {
+      userId
+      password
+    }
+  }
+`;
+export const onDeleteAccount = /* GraphQL */ `
+  subscription OnDeleteAccount($userId: String, $password: String) {
+    onDeleteAccount(userId: $userId, password: $password) {
+      userId
+      password
     }
   }
 `;

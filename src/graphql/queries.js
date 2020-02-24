@@ -4,13 +4,28 @@
 export const getComment = /* GraphQL */ `
   query GetComment($id: String!) {
     getComment(id: $id) {
-      id
-      eventId
-      userId
-      text
       date
-      upvote
       downvote
+      eventId
+      id
+      text
+      upvote
+      userId
+    }
+  }
+`;
+export const getEvent = /* GraphQL */ `
+  query GetEvent($eventId: String!) {
+    getEvent(eventId: $eventId) {
+      description
+      downvote
+      endTime
+      eventId
+      latitude
+      longitude
+      posterId
+      startTime
+      upvote
     }
   }
 `;
@@ -22,30 +37,15 @@ export const listComments = /* GraphQL */ `
   ) {
     listComments(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
-        id
-        eventId
-        userId
-        text
         date
-        upvote
         downvote
+        eventId
+        id
+        text
+        upvote
+        userId
       }
       nextToken
-    }
-  }
-`;
-export const getEvent = /* GraphQL */ `
-  query GetEvent($eventId: String!) {
-    getEvent(eventId: $eventId) {
-      eventId
-      posterId
-      longitude
-      latitude
-      startTime
-      endTime
-      description
-      upvote
-      downvote
     }
   }
 `;
@@ -57,15 +57,38 @@ export const listEvents = /* GraphQL */ `
   ) {
     listEvents(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
-        eventId
-        posterId
-        longitude
-        latitude
-        startTime
-        endTime
         description
-        upvote
         downvote
+        endTime
+        eventId
+        latitude
+        longitude
+        posterId
+        startTime
+        upvote
+      }
+      nextToken
+    }
+  }
+`;
+export const getAccount = /* GraphQL */ `
+  query GetAccount($userId: String!) {
+    getAccount(userId: $userId) {
+      userId
+      password
+    }
+  }
+`;
+export const listAccounts = /* GraphQL */ `
+  query ListAccounts(
+    $filter: TableAccountFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listAccounts(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        userId
+        password
       }
       nextToken
     }
