@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TextInput, Dimensions, StyleSheet, View, Button, Alert} from 'react-native';
+import { TextInput, Image, Dimensions, StyleSheet, View, Button, Alert} from 'react-native';
 import API, { graphqlOperation } from '@aws-amplify/api';
 import {getAccount} from '../../graphql/queries'
 
@@ -15,15 +15,15 @@ export default class LoginComponent extends Component {
     checkUserName = function (user, password) {
         if(user === ''){
             Alert.alert(
-                'Title',
-                'Descibtion'
+                'Error',
+                'User name cannot be empty'
             )
             return false;
         }
         else if(password === ''){
             Alert.alert(
-                'Title',
-                'Descibtion'
+                'Error',
+                'Password name cannot be empty'
             )
             return false;
         }
@@ -33,13 +33,17 @@ export default class LoginComponent extends Component {
     render() {
         return (
             <View style={styles.container}>
+                <Image
+                    source={require('../../res/images/logo.png')}
+                />
                 <TextInput 
                     style={styles.input}
                     placeholder="Username"
                     onChangeText={(text) => this.setState({user: text})}
                     value={this.state.user}/>
             
-                <TextInput 
+                <TextInput
+                    secureTextEntry={true}
                     style={styles.input}
                     placeholder="Password"
                     onChangeText={(text) => this.setState({password: text})}
@@ -50,7 +54,7 @@ export default class LoginComponent extends Component {
                     const acc = await API.graphql(graphqlOperation(getAccount, { userId: this.state.user }));
                     if (acc.data.getAccount.password === this.state.password) {
                         this.props.navigation.navigate('Maps');
-                    }
+                    } else {Alert.alert('Error', 'Wrong password')}
                 }
             }}/>
                 <Button title='Register' onPress={() => this.props.navigation.navigate('Register')}/>
@@ -65,7 +69,8 @@ const styles = StyleSheet.create({
       alignSelf: 'center',
       justifyContent: 'center'
     },
-
+    image: {
+    },
     input: {
         height: 40,
         borderBottomWidth: 1,

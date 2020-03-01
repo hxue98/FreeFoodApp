@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TextInput, Dimensions, StyleSheet, View, Button, Alert } from 'react-native';
+import { TextInput, Image, Dimensions, StyleSheet, View, Button, Alert } from 'react-native';
 import API, { graphqlOperation } from '@aws-amplify/api';
 import {createAccount} from '../../graphql/mutations'
 
@@ -15,15 +15,15 @@ export default class RegisterComponent extends Component {
     checkUserName = function (user, password) {
         if(user === ''){
             Alert.alert(
-                'Title',
-                'Descibtion'
+                'Error',
+                'User name cannot be empty'
             )
             return false;
         }
         else if(password === ''){
             Alert.alert(
-                'Title',
-                'Descibtion'
+                'Error',
+                'Password name cannot be empty'
             )
             return false;
         }
@@ -33,13 +33,18 @@ export default class RegisterComponent extends Component {
     render() {
         return (
             <View style={styles.container}>
+
+            <Image
+                source={require('../../res/images/logo.png')}/>
+
             <TextInput 
                 style={styles.input}
                 placeholder="Username"
                 onChangeText={(text) => this.setState({user: text})}
                 value={this.state.user}/>
         
-            <TextInput 
+            <TextInput
+                secureTextEntry={true}   
                 style={styles.input}
                 placeholder="Password"
                 onChangeText={(text) => this.setState({password: text})}
@@ -48,7 +53,7 @@ export default class RegisterComponent extends Component {
             <Button title='Register' onPress={ () => {
                 if(this.checkUserName(this.state.user, this.state.password)){
                     API.graphql(graphqlOperation(createAccount, { input: {userId: this.state.user, password: this.state.password} }));
-                    this.props.navigation.navigate('Maps');
+                    this.props.navigation.replace('Maps');
                 }
             }}/>
             <Button title='Return to Login' onPress={() => this.props.navigation.navigate('Login')}/>

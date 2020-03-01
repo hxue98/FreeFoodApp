@@ -34,6 +34,7 @@ export default class MapComponent extends Component {
                     key: 123456
                 };
                 this.setState({initLocation: region, region: region, locationFetchCompolete: true});
+                console.log(region);
             },
             (error) => {
                 console.log(error.code, error.message);
@@ -53,8 +54,9 @@ export default class MapComponent extends Component {
             <View style={styles.container}>
                 <MapView
                     provider={PROVIDER_GOOGLE}
+                    initialRegion={this.state.initLocation}
                     region={this.state.region}
-                    onRegionChangeComplete={(region) => this.setState({region: region})}
+                    // onRegionChangeComplete={(region) => this.setState({region: region})}
                     style={styles.map}
                 >
                     {this.state.events.map(event => (
