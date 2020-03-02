@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { YellowBox } from 'react-native';
 import API from '@aws-amplify/api';
 import PubSub from '@aws-amplify/pubsub';
 import config from './aws-exports';
@@ -18,35 +18,37 @@ PubSub.configure(config)
 
 const Stack = createStackNavigator();
 
+YellowBox.ignoreWarnings([
+    'Require cycle:',
+]);
+
 export default function App() {
 
-  return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Login"
-          component={LoginComponent}
-        />
-        <Stack.Screen
-          name="Register"
-          component={RegisterComponent}
-        />
-        <Stack.Screen
-          name="Maps"
-          component={MapsComponent}
-          options={{title: 'Free Food Map'}}
-        />
-        <Stack.Screen
-          name="Detail"
-          component={LocationDetailComponent}
-        />
-        <Stack.Screen
-          name="Comments"
-          component={CommentComponent}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
-    
+    return (
+        <NavigationContainer>
+            <Stack.Navigator>
+                <Stack.Screen
+                    name="Login"
+                    component={LoginComponent}
+                />
+                <Stack.Screen
+                    name="Register"
+                    component={RegisterComponent}
+                />
+                <Stack.Screen
+                    name="Maps"
+                    component={MapsComponent}
+                    options={{title: 'Free Food Map'}}
+                />
+                <Stack.Screen
+                    name="Detail"
+                    component={LocationDetailComponent}
+                />
+                <Stack.Screen
+                    name="Comments"
+                    component={CommentComponent}
+                />
+            </Stack.Navigator>
+        </NavigationContainer>
   );
-
 }

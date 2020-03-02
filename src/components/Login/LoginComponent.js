@@ -1,29 +1,42 @@
 import React, { Component } from 'react';
-import { TextInput, Image, Dimensions, StyleSheet, View, Button, Alert} from 'react-native';
-import API, { graphqlOperation } from '@aws-amplify/api';
-import {getAccount} from '../../graphql/queries'
+import { TextInput, Image, StyleSheet, View, Button, Alert } from 'react-native';
+import Hashes from 'jshashes';
+import lambda from '../../api';
+
+async function login(userId, password) {
+    const request = {
+        operation: 'LOGIN',
+        params: {
+            userId: userId,
+            password: new Hashes.MD5().b64(password)
+        }
+    };
+
+    const response = await lambda(request);
+    return response;
+}
 
 export default class LoginComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            user: '',
+            userId: '',
             password: ''
         };
     }
 
-    checkUserName = function (user, password) {
-        if(user === ''){
+    checkUserName = function (userId, password) {
+        if(userId === ''){
             Alert.alert(
                 'Error',
-                'User name cannot be empty'
+                'Username cannot be empty'
             )
             return false;
         }
         else if(password === ''){
             Alert.alert(
                 'Error',
-                'Password name cannot be empty'
+                'Password cannot be empty'
             )
             return false;
         }
@@ -36,12 +49,12 @@ export default class LoginComponent extends Component {
                 <Image
                     source={require('../../res/images/logo.png')}
                 />
-                <TextInput 
+                <TextInput
                     style={styles.input}
                     placeholder="Username"
-                    onChangeText={(text) => this.setState({user: text})}
-                    value={this.state.user}/>
-            
+                    onChangeText={(text) => this.setState({userId: text})}
+                    value={this.state.userId}/>
+
                 <TextInput
                     secureTextEntry={true}
                     style={styles.input}
@@ -50,11 +63,16 @@ export default class LoginComponent extends Component {
                     value={this.state.password}/>
 
                 <Button title='Login' onPress={ async () => {
-                if(this.checkUserName(this.state.user, this.state.password)){
-                    const acc = await API.graphql(graphqlOperation(getAccount, { userId: this.state.user }));
-                    if (acc.data.getAccount.password === this.state.password) {
-                        this.props.navigation.navigate('Maps');
-                    } else {Alert.alert('Error', 'Wrong password')}
+                if(this.checkUserName(this.state.userId, this.state.password)){
+                    const res = await login(this.state.userId, this.state.password);
+                    if (res.success) {
+                        this.props.navigation.replace('Maps');
+                    } else {
+                        Alert.alert(
+                            'Error',
+                            'Invalid username or password'
+                        );
+                    }
                 }
             }}/>
                 <Button title='Register' onPress={() => this.props.navigation.navigate('Register')}/>
@@ -76,4 +94,4 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderColor: '#a6a6a6'
     }
-  });
+});

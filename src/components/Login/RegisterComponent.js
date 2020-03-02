@@ -1,26 +1,39 @@
 import React, { Component } from 'react';
-import { TextInput, Image, Dimensions, StyleSheet, View, Button, Alert } from 'react-native';
-import API, { graphqlOperation } from '@aws-amplify/api';
-import {createAccount} from '../../graphql/mutations'
+import { TextInput, Image, StyleSheet, View, Button, Alert } from 'react-native';
+import Hashes from 'jshashes';
+import lambda from '../../api';
+
+async function register(userId, password) {
+    const request = {
+        operation: 'REGISTER',
+        params: {
+            userId: userId,
+            password: new Hashes.MD5().b64(password)
+        }
+    };
+
+    const response = await lambda(request);
+    return response;
+}
 
 export default class RegisterComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            user: '',
+            userId: '',
             password: ''
         };
     }
 
-    checkUserName = function (user, password) {
-        if(user === ''){
+    checkUserName = function (userId, password) {
+        if (userId === ''){
             Alert.alert(
                 'Error',
-                'User name cannot be empty'
+                'userId name cannot be empty'
             )
             return false;
         }
-        else if(password === ''){
+        else if (password === ''){
             Alert.alert(
                 'Error',
                 'Password name cannot be empty'
@@ -37,23 +50,30 @@ export default class RegisterComponent extends Component {
             <Image
                 source={require('../../res/images/logo.png')}/>
 
-            <TextInput 
+            <TextInput
                 style={styles.input}
                 placeholder="Username"
-                onChangeText={(text) => this.setState({user: text})}
-                value={this.state.user}/>
-        
+                onChangeText={(text) => this.setState({userId: text})}
+                value={this.state.userId}/>
+
             <TextInput
-                secureTextEntry={true}   
+                secureTextEntry={true}
                 style={styles.input}
                 placeholder="Password"
                 onChangeText={(text) => this.setState({password: text})}
                 value={this.state.password}/>
 
-            <Button title='Register' onPress={ () => {
-                if(this.checkUserName(this.state.user, this.state.password)){
-                    API.graphql(graphqlOperation(createAccount, { input: {userId: this.state.user, password: this.state.password} }));
-                    this.props.navigation.replace('Maps');
+            <Button title='Register' onPress={ async () => {
+                if (this.checkUserName(this.state.userId, this.state.password)){
+                    const res = await register(this.state.userId, this.state.password);
+                    if (res.success) {
+                        this.props.navigation.replace('Maps');
+                    } else {
+                        Alert.alert(
+                            'Error',
+                            'Username is taken'
+                        );
+                    }
                 }
             }}/>
             <Button title='Return to Login' onPress={() => this.props.navigation.navigate('Login')}/>
@@ -68,10 +88,9 @@ const styles = StyleSheet.create({
       alignSelf: 'center',
       justifyContent: 'center'
     },
-
     input: {
         height: 40,
         borderBottomWidth: 1,
         borderColor: '#a6a6a6'
     }
-  });
+});
