@@ -34,7 +34,6 @@ export default class MapComponent extends Component {
                     key: 123456
                 };
                 this.setState({initLocation: region, region: region, locationFetchCompolete: true});
-                console.log(region);
             },
             (error) => {
                 console.log(error.code, error.message);
@@ -64,7 +63,7 @@ export default class MapComponent extends Component {
                             coordinate={{latitude: event.latitude, longitude: event.longitude}}
                         >
                             <Callout onPress={() => this.props.navigation.navigate('Comments', {eventId: event.eventId})}>
-                                <View>
+                                <View key={event.key}>
                                     <LocationDetailComponent
                                         time={new Date(event.startTime).toLocaleTimeString() + ' - ' + new Date(event.endTime).toLocaleTimeString()}
                                         description={event.description}
