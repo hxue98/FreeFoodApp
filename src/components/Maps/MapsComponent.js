@@ -13,6 +13,7 @@ import Geolocation from 'react-native-geolocation-service';
 import API, {graphqlOperation} from '@aws-amplify/api';
 import {listEvents} from '../../graphql/queries';
 import CreateEvents from '../Events/CreateEvents';
+import store from '../../redux/store';
 
 import LocationDetailComponent from '../LocationDetail/LocationDetailComponent';
 
@@ -31,6 +32,7 @@ export default class MapComponent extends Component {
   }
 
   async componentDidMount() {
+    console.log(store.getState());
     Geolocation.getCurrentPosition(
       position => {
         const region = {
@@ -121,11 +123,7 @@ export default class MapComponent extends Component {
           </View>
           <View style={styles.add}>
             <TouchableOpacity
-              onPress={() =>
-                this.props.navigation.navigate('CreateEvents', {
-                  userId: this.props.route.params.userId,
-                })
-              }>
+              onPress={() => this.props.navigation.navigate('CreateEvents')}>
               <Image
                 // style={styles.add}
                 source={require('../../res/images/add-50.png')}

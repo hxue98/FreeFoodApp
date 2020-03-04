@@ -13,9 +13,9 @@ import {
 import API, {graphqlOperation} from '@aws-amplify/api';
 import {createEvent} from '../../graphql/mutations';
 import Geolocation from 'react-native-geolocation-service';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
-
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import store from '../../redux/store';
 async function createNewEvents(
   posterId,
   text,
@@ -49,14 +49,38 @@ export default class CreateEvents extends Component {
       eventText: '',
       latitude: 0,
       longitude: 0,
+      startTime: 0,
+      endTime: 0,
       isVisible: false,
       isEndVisible: false,
       chosenStartDate: '',
       chosenEndDate: '',
-      startTime: 0,
-      endTime: 0,
     };
   }
+
+  async componentDidMount() {
+    console.log('from create events', store.getState());
+    Geolocation.getCurrentPosition(
+      position => {
+        const region = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          latitudeDelta: 0.00822 * 2.5,
+          longitudeDelta: 0.00401 * 2.5,
+          key: 123456,
+        };
+        this.setState({
+          latitude: region.latitude,
+          longitude: region.longitude,
+        });
+      },
+      error => {
+        console.log(error.code, error.message);
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
+  }
+
   startPicker = datetime => {
     this.setState({
       isVisible: false,
@@ -97,28 +121,6 @@ export default class CreateEvents extends Component {
     });
   };
 
-  async componentDidMount() {
-    Geolocation.getCurrentPosition(
-      position => {
-        const region = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          latitudeDelta: 0.00822 * 2.5,
-          longitudeDelta: 0.00401 * 2.5,
-          key: 123456,
-        };
-        this.setState({
-          latitude: region.latitude,
-          longitude: region.longitude,
-        });
-      },
-      error => {
-        console.log(error.code, error.message);
-      },
-      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-    );
-  }
-
   render() {
     return (
       <View style={styles.container}>
@@ -135,10 +137,7 @@ export default class CreateEvents extends Component {
               is24Hour={false}
             />
           </TouchableOpacity>
-          <Text
-            style={{fontSize: 20, color: 'red', marginTop: 30, marginLeft: 10}}>
-            {this.state.chosenStartDate}
-          </Text>
+          <Text style={styles.startText}>{this.state.chosenStartDate}</Text>
         </View>
         <View style={{flex: 1, flexDirection: 'row'}}>
           <TouchableOpacity style={styles.button} onPress={this.showEndPicker}>
@@ -151,46 +150,22 @@ export default class CreateEvents extends Component {
               is24Hour={false}
             />
           </TouchableOpacity>
-          <Text
-            style={{
-              fontSize: 20,
-              color: 'red',
-              marginTop: 30,
-              marginLeft: 10,
-            }}>
-            {this.state.chosenEndDate}
-          </Text>
+          <Text style={styles.endText}>{this.state.chosenEndDate}</Text>
         </View>
-
-        {/* <TextInput
-          style={styles.input}
-          placeholder="startTime"
-          underlineColorAndroid={'transparent'}
-          //   onChangeText={text => this.setState({user: text})}
-          //   value={this.state.user}
-        /> */}
         <View style={{marginTop: 80}}>
           <TextInput
-            style={{
-              height: 200,
-              width: 300,
-              borderWidth: 3,
-              borderColor: '#a6a6a6',
-              fontSize: 20,
-            }}
+            style={styles.description}
             placeholder="Description"
             multiline={true}
             textAlignVertical={'top'}
             underlineColorAndroid={'transparent'}
             onChangeText={text => this.setState({eventText: text})}
             value={this.state.eventText}
-            //   onChangeText={text => this.setState({password: text})}
-            //   value={this.state.password}
           />
           <TouchableOpacity
             onPress={() => {
               createNewEvents(
-                this.props.route.params.userId,
+                store.getState().userId,
                 this.state.eventText,
                 this.state.latitude,
                 this.state.longitude,
@@ -202,12 +177,7 @@ export default class CreateEvents extends Component {
               }, 300);
             }}>
             <Image
-              style={{
-                alignSelf: 'center',
-                marginTop: 30,
-                height: 50,
-                width: 60,
-              }}
+              style={styles.image}
               source={require('../../res/images/deliver-food-40.png')}
             />
           </TouchableOpacity>
@@ -223,7 +193,19 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     justifyContent: 'center',
   },
-  image: {},
+  image: {
+    alignSelf: 'center',
+    marginTop: 30,
+    height: 50,
+    width: 60,
+  },
+  description: {
+    height: 200,
+    width: 300,
+    borderWidth: 3,
+    borderColor: '#a6a6a6',
+    fontSize: 20,
+  },
   button: {
     width: 50,
     height: 50,
@@ -237,12 +219,16 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
   },
-  //   input: {
-  //     height: 40,
-  //     width: 300,
-  //     marginBottom: 4,
-  //     marginTop: 4,
-  //     borderWidth: 1,
-  //     borderColor: '#a6a6a6',
-  //   },
+  startText: {
+    fontSize: 20,
+    color: 'red',
+    marginTop: 30,
+    marginLeft: 10,
+  },
+  endText: {
+    fontSize: 20,
+    color: 'red',
+    marginTop: 30,
+    marginLeft: 10,
+  },
 });

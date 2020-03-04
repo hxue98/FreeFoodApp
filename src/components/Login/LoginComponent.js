@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import {TextInput, Image, StyleSheet, View, Button, Alert} from 'react-native';
 import Hashes from 'jshashes';
 import lambda from '../../api';
+import {connect} from 'react-redux';
+import {storeUserId} from '../../redux/actions';
 
 async function login(userId, password) {
   const request = {
@@ -16,11 +18,10 @@ async function login(userId, password) {
   return response;
 }
 
-export default class LoginComponent extends Component {
+class LoginComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userId: '',
       password: '',
     };
   }
@@ -36,6 +37,17 @@ export default class LoginComponent extends Component {
     return true;
   };
 
+  signin = async function() {
+    if (this.checkUserName(this.state.userId, this.state.password)) {
+      const res = await login(this.state.userId, this.state.password);
+      if (res.success) {
+        this.props.navigation.replace('Maps');
+      } else {
+        Alert.alert('Error', 'Invalid username or password');
+      }
+    }
+  };
+
   render() {
     return (
       <View style={styles.container}>
@@ -44,7 +56,7 @@ export default class LoginComponent extends Component {
           style={styles.input}
           placeholder="Username"
           onChangeText={text => this.setState({userId: text})}
-          value={this.state.userId}
+          value={this.props.userId}
         />
 
         <TextInput
@@ -52,22 +64,14 @@ export default class LoginComponent extends Component {
           style={styles.input}
           placeholder="Password"
           onChangeText={text => this.setState({password: text})}
-          value={this.state.password}
+          value={this.props.password}
         />
 
         <Button
           title="Login"
-          onPress={async () => {
-            if (this.checkUserName(this.state.userId, this.state.password)) {
-              const res = await login(this.state.userId, this.state.password);
-              if (res.success) {
-                this.props.navigation.replace('Maps', {
-                  userId: this.state.userId,
-                });
-              } else {
-                Alert.alert('Error', 'Invalid username or password');
-              }
-            }
+          onPress={() => {
+            this.signin();
+            this.props.storeUserId(this.state.userId);
           }}
         />
         <Button
@@ -78,6 +82,20 @@ export default class LoginComponent extends Component {
     );
   }
 }
+
+function mapStateToProps(state) {
+  return {
+    userId: state.userId,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    storeUserId: userId => dispatch(storeUserId(userId)),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginComponent);
 
 const styles = StyleSheet.create({
   container: {
