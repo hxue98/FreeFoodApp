@@ -14,17 +14,12 @@ import {
 } from 'react-native';
 import API, {graphqlOperation} from '@aws-amplify/api';
 import {createEvent} from '../../graphql/mutations';
-import Geolocation from 'react-native-geolocation-service';
 import moment from 'moment';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import store from '../../redux/store';
-import Geocode from 'react-geocode';
 import {GOOGLE_API_KEY} from '../../../config';
-import {GoogleAutoComplete} from 'react-native-google-autocomplete';
-import LocationItem from '../LocationDetail/LocationItem';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
-// Geocode.setApiKey(KEY.GOOGLE_API_KEY);
-// Geocode.enableDebug();
+
 async function createNewEvents(
   posterId,
   text,
@@ -73,23 +68,6 @@ export default class CreateEvents extends Component {
       longitude: details.geometry.location.lng,
     });
   }
-
-  // setEventLocation(address) {
-  //   // Get latidude & longitude from address.
-  //   Geocode.fromAddress(address).then(
-  //     response => {
-  //       const {lat, lng} = response.results[0].geometry.location;
-  //       this.setState({
-  //         latitude: lat,
-  //         longitude: lng,
-  //       });
-  //       console.log(lat, lng);
-  //     },
-  //     error => {
-  //       console.error(error);
-  //     },
-  //   );
-  // }
 
   startPicker = datetime => {
     this.setState({
@@ -148,7 +126,6 @@ export default class CreateEvents extends Component {
             this.setLocation(details);
           }}
           query={{
-            // available options: https://developers.google.com/places/web-service/autocomplete
             key: GOOGLE_API_KEY,
             language: 'en', // language of the results
             // types: '(cities)', // default: 'geocode'

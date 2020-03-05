@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {TextInput, Dimensions, StyleSheet, View, Button} from 'react-native';
 import API, {graphqlOperation} from '@aws-amplify/api';
 import {createComment} from '../../graphql/mutations';
+import store from '../../redux/store';
 
 //TODO - replace hardcoded eventId/userId
 async function createNewComment(userId, eventId, text, date) {
@@ -10,7 +11,7 @@ async function createNewComment(userId, eventId, text, date) {
   }
   const comment = {
     eventId: '123',
-    userId: '123',
+    userId: userId,
     text: text,
     date: date,
     upvote: 0,
@@ -41,7 +42,12 @@ export default class CommentInputComponent extends Component {
           title="Submit"
           style={styles.btn}
           onPress={() => {
-            createNewComment(null, null, this.state.commentText, Date.now());
+            createNewComment(
+              store.getState().userId,
+              null,
+              this.state.commentText,
+              Date.now(),
+            );
             this.setState({commentText: ''});
             this.props.refreshComments();
           }}

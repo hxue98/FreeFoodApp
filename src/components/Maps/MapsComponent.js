@@ -123,7 +123,7 @@ export default class MapComponent extends Component {
           </View>
           <View style={styles.add}>
             <TouchableOpacity
-              onPress={() => this.props.navigation.navigate('CreateEvents')}>
+              onPress={() => this.props.navigation.navigate(CreateEvents)}>
               <Image
                 // style={styles.add}
                 source={require('../../res/images/add-50.png')}
