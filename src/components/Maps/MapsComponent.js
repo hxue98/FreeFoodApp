@@ -20,7 +20,6 @@ import LocationDetailComponent from '../LocationDetail/LocationDetailComponent';
 export default class MapComponent extends Component {
   constructor(props) {
     super(props);
-    // console.log(props);
     this.state = {
       initLocation: null,
       region: null,
@@ -42,6 +41,7 @@ export default class MapComponent extends Component {
           longitudeDelta: 0.00401 * 2.5,
           key: 123456,
         };
+
         this.setState({
           initLocation: region,
           region: region,
