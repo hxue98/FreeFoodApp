@@ -12,13 +12,14 @@ import {TextInput} from 'react-native-gesture-handler';
 import Geolocation from 'react-native-geolocation-service';
 import API, {graphqlOperation} from '@aws-amplify/api';
 import {listEvents} from '../../graphql/queries';
+import CreateEvents from '../Events/CreateEvents';
+import store from '../../redux/store';
 
 import LocationDetailComponent from '../LocationDetail/LocationDetailComponent';
 
 export default class MapComponent extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       initLocation: null,
       region: null,
@@ -30,6 +31,7 @@ export default class MapComponent extends Component {
   }
 
   async componentDidMount() {
+    console.log(store.getState());
     Geolocation.getCurrentPosition(
       position => {
         const region = {
@@ -39,6 +41,7 @@ export default class MapComponent extends Component {
           longitudeDelta: 0.00401 * 2.5,
           key: 123456,
         };
+
         this.setState({
           initLocation: region,
           region: region,
@@ -118,6 +121,15 @@ export default class MapComponent extends Component {
               />
             </TouchableOpacity>
           </View>
+          <View style={styles.add}>
+            <TouchableOpacity
+              onPress={() => this.props.navigation.navigate(CreateEvents)}>
+              <Image
+                // style={styles.add}
+                source={require('../../res/images/add-50.png')}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
       ) : (
         <View style={styles.loading}>
@@ -164,4 +176,13 @@ const styles = StyleSheet.create({
     marginTop: 7,
   },
   detail: {},
+  add: {
+    height: 50,
+    width: 50,
+    justifyContent: 'center',
+    alignSelf: 'flex-end',
+    right: 10,
+    position: 'absolute',
+    bottom: 90,
+  },
 });
