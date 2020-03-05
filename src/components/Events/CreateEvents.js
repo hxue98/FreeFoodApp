@@ -28,10 +28,10 @@ import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete'
 async function createNewEvents(
   posterId,
   text,
-  latitude,
-  longitude,
   startTime,
   endTime,
+  latitude,
+  longitude,
 ) {
   if (text == '') {
     return;
@@ -50,15 +50,6 @@ async function createNewEvents(
   await API.graphql(graphqlOperation(createEvent, {input: event}));
 }
 
-const homePlace = {
-  description: 'Home',
-  geometry: {location: {lat: 48.8152937, lng: 2.4597668}},
-};
-const workPlace = {
-  description: 'Work',
-  geometry: {location: {lat: 48.8496818, lng: 2.2940881}},
-};
-
 export default class CreateEvents extends Component {
   constructor(props) {
     super(props);
@@ -73,26 +64,32 @@ export default class CreateEvents extends Component {
       isEndVisible: false,
       chosenStartDate: '',
       chosenEndDate: '',
-      address: '',
     };
   }
 
-  setEventLocation(address) {
-    // Get latidude & longitude from address.
-    Geocode.fromAddress(address).then(
-      response => {
-        const {lat, lng} = response.results[0].geometry.location;
-        this.setState({
-          latitude: lat,
-          longitude: lng,
-        });
-        console.log(lat, lng);
-      },
-      error => {
-        console.error(error);
-      },
-    );
+  setLocation(details) {
+    this.setState({
+      latitude: details.geometry.location.lat,
+      longitude: details.geometry.location.lng,
+    });
   }
+
+  // setEventLocation(address) {
+  //   // Get latidude & longitude from address.
+  //   Geocode.fromAddress(address).then(
+  //     response => {
+  //       const {lat, lng} = response.results[0].geometry.location;
+  //       this.setState({
+  //         latitude: lat,
+  //         longitude: lng,
+  //       });
+  //       console.log(lat, lng);
+  //     },
+  //     error => {
+  //       console.error(error);
+  //     },
+  //   );
+  // }
 
   startPicker = datetime => {
     this.setState({
@@ -137,53 +134,41 @@ export default class CreateEvents extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <GoogleAutoComplete
-          apiKey={GOOGLE_API_KEY}
-          debounce={500}
-          minLength={2}>
-          {({
-            inputValue,
-            handleTextChange,
-            locationResults,
-            fetchDetails,
-            isSearching,
-            clearSearch,
-          }) => (
-            <React.Fragment>
-              <View>
-                <TextInput
-                  style={{
-                    height: 40,
-                    width: 300,
-                    borderWidth: 1,
-                    paddingHorizontal: 16,
-                  }}
-                  value={inputValue}
-                  onChangeText={handleTextChange}
-                  placeholder="Location..."
-                />
-                {console.log('hello', fetchDetails)}
-                <Button title="Clear" onPress={clearSearch} />
-                {isSearching && <ActivityIndicator size="large" color="red" />}
-                <ScrollView style={{maxHeight: 100}}>
-                  {locationResults.map((el, i) => (
-                    <LocationItem
-                      {...el}
-                      fetchDetails={fetchDetails}
-                      key={String(i)}>
-                      {console.log('detail', {fetchDetails})}
-                    </LocationItem>
-                  ))}
-                </ScrollView>
-              </View>
-            </React.Fragment>
-          )}
-        </GoogleAutoComplete>
-        <View style={{flex: 1, flexDirection: 'row'}}>
+        <GooglePlacesAutocomplete
+          placeholder="Search Location"
+          minLength={2} // minimum length of text to search
+          autoFocus={false}
+          returnKeyType={'search'}
+          listViewDisplayed="true" // true/false/undefined
+          fetchDetails={true}
+          renderDescription={row => row.description} // custom description render
+          onPress={(data, details) => {
+            // 'details' is provided when fetchDetails = true
+            console.log(details.geometry.location);
+            this.setLocation(details);
+          }}
+          query={{
+            // available options: https://developers.google.com/places/web-service/autocomplete
+            key: GOOGLE_API_KEY,
+            language: 'en', // language of the results
+            // types: '(cities)', // default: 'geocode'
+          }}
+          styles={{
+            textInputContainer: {
+              width: '100%',
+            },
+            description: {
+              fontWeight: 'bold',
+            },
+            predefinedPlacesDescription: {
+              color: '#1faadb',
+            },
+          }}
+        />
+        <View>
           <TouchableOpacity
-            style={styles.startTimebutton}
+            style={{borderWidth: 3}}
             onPress={this.showStartPicker}>
-            <Text style={styles.text}>Start Time</Text>
             <DateTimePickerModal
               isVisible={this.state.isVisible}
               onConfirm={this.startPicker}
@@ -191,14 +176,11 @@ export default class CreateEvents extends Component {
               mode="datetime"
               is24Hour={false}
             />
+            <Text>{'Start Time: ' + this.state.chosenStartDate}</Text>
           </TouchableOpacity>
-          <Text style={styles.startText}>{this.state.chosenStartDate}</Text>
-        </View>
-        <View style={{flex: 1, flexDirection: 'row'}}>
           <TouchableOpacity
-            style={styles.endTimebutton}
+            style={{borderWidth: 3}}
             onPress={this.showEndPicker}>
-            <Text style={styles.text}>End Time</Text>
             <DateTimePickerModal
               isVisible={this.state.isEndVisible}
               onConfirm={this.endPicker}
@@ -206,19 +188,8 @@ export default class CreateEvents extends Component {
               mode="datetime"
               is24Hour={false}
             />
+            <Text>{'End Time: ' + this.state.chosenEndDate}</Text>
           </TouchableOpacity>
-          <Text style={styles.endText}>{this.state.chosenEndDate}</Text>
-        </View>
-        <View style={{marginTop: 80}}>
-          {/* <TextInput
-            style={styles.address}
-            placeholder="Address"
-            multiline={true}
-            textAlignVertical={'top'}
-            underlineColorAndroid={'transparent'}
-            onChangeText={text => this.setState({address: text})}
-            value={this.state.address}
-          /> */}
           <TextInput
             style={styles.description}
             placeholder="Description"
@@ -230,23 +201,19 @@ export default class CreateEvents extends Component {
           />
           <TouchableOpacity
             onPress={() => {
-              this.setEventLocation(this.state.address);
               createNewEvents(
                 store.getState().userId,
                 this.state.eventText,
-                this.state.latitude,
-                this.state.longitude,
                 this.state.startTime,
                 this.state.endTime,
-              );
+                this.state.latitude,
+                this.state.longitude,
+              ).catch(err => console.log(err));
               setTimeout(() => {
                 this.props.navigation.replace('Maps');
               }, 300);
             }}>
-            <Image
-              style={styles.image}
-              source={require('../../res/images/deliver-food-40.png')}
-            />
+            <Text style={{alignSelf: 'center', fontSize: 20}}>Confirm</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -259,60 +226,18 @@ const styles = StyleSheet.create({
     flex: 1,
     alignSelf: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fff',
-  },
-  image: {
-    alignSelf: 'center',
-    marginTop: 30,
-    height: 50,
-    width: 60,
+    width: '100%',
   },
   description: {
-    height: 200,
-    width: 300,
+    height: 100,
+    width: '100%',
     borderWidth: 3,
     borderColor: '#a6a6a6',
     fontSize: 20,
-  },
-  startTimebutton: {
-    width: 50,
-    height: 50,
-    backgroundColor: '#330066',
-    borderRadius: 30,
-    justifyContent: 'center',
-    marginBottom: 15,
-  },
-  endTimebutton: {
-    width: 50,
-    height: 50,
-    backgroundColor: '#330066',
-    borderRadius: 30,
-    justifyContent: 'center',
-    marginTop: 15,
   },
   text: {
     fontSize: 18,
     color: 'white',
     textAlign: 'center',
-  },
-  startText: {
-    fontSize: 20,
-    color: 'red',
-    marginTop: 30,
-    marginLeft: 10,
-  },
-  endText: {
-    fontSize: 20,
-    color: 'red',
-    marginTop: 5,
-    marginLeft: 10,
-  },
-  address: {
-    fontSize: 15,
-    height: 45,
-    width: 300,
-    borderWidth: 3,
-    borderColor: '#a6a6a6',
-    marginBottom: 20,
   },
 });

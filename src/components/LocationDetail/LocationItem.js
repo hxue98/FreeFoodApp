@@ -5,7 +5,7 @@ export default class LocationItem extends PureComponent {
   render() {
     return (
       <TouchableOpacity style={styles.root}>
-        <Text>{this.props.description}</Text>
+        <Text>{this.props.id}</Text>
       </TouchableOpacity>
     );
   }
