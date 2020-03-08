@@ -10,7 +10,7 @@ async function createNewComment(userId, eventId, text, date) {
     return;
   }
   const comment = {
-    eventId: '123',
+    eventId: eventId,
     userId: userId,
     text: text,
     date: date,
@@ -44,7 +44,7 @@ export default class CommentInputComponent extends Component {
           onPress={() => {
             createNewComment(
               store.getState().userId,
-              null,
+              this.props.eventId,
               this.state.commentText,
               Date.now(),
             );

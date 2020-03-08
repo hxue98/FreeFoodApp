@@ -121,8 +121,6 @@ export default class CreateEvents extends Component {
           fetchDetails={true}
           renderDescription={row => row.description} // custom description render
           onPress={(data, details) => {
-            // 'details' is provided when fetchDetails = true
-            console.log(details.geometry.location);
             this.setLocation(details);
           }}
           query={{

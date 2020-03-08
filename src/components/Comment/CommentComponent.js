@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {View, FlatList, ActivityIndicator, StyleSheet} from 'react-native';
-import API, {graphqlOperation} from '@aws-amplify/api';
-import {listComments} from '../../graphql/queries';
+import lambda from '../../api';
 
 import CommentInputComponent from './CommentInputComponent';
 import CommentLineComponent from './CommentLineComponent';
@@ -17,10 +16,17 @@ export default class CommentComponent extends Component {
     };
   }
 
-  getComments = async () => {
-    const comments = await API.graphql(graphqlOperation(listComments));
+  getComments = async (eventId) => {
+    const request = {
+        operation: 'GETCOMMENTS',
+        params: {
+            eventId: eventId
+        },
+    };
+
+    const response = await lambda(request);
     this.setState({
-      data: comments.data.listComments.items,
+      data: response.comments,
       queryComplete: true,
     });
   };
@@ -28,12 +34,12 @@ export default class CommentComponent extends Component {
   refreshComments = async () => {
     this.setState({queryComplete: false});
     setTimeout(() => {
-      this.getComments();
+      this.getComments(this.props.route.params.eventId);
     }, 300);
   };
 
   componentDidMount() {
-    this.getComments();
+    this.getComments(this.props.route.params.eventId);
   }
 
   render() {
@@ -63,6 +69,7 @@ export default class CommentComponent extends Component {
           scrollEnabled={true}
         />
         <CommentInputComponent
+          eventId={this.props.route.params.eventId}
           refreshComments={this.refreshComments}
           style={styles.input}
         />

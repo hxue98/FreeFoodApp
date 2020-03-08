@@ -31,7 +31,6 @@ export default class MapComponent extends Component {
   }
 
   async componentDidMount() {
-    console.log(store.getState());
     Geolocation.getCurrentPosition(
       position => {
         const region = {
@@ -49,7 +48,7 @@ export default class MapComponent extends Component {
         });
       },
       error => {
-        console.log(error.code, error.message);
+        console.error(error.code, error.message);
       },
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
@@ -76,14 +75,15 @@ export default class MapComponent extends Component {
                 coordinate={{
                   latitude: event.latitude,
                   longitude: event.longitude,
-                }}>
+                }}
+                key={event.eventId}>
                 <Callout
                   onPress={() =>
                     this.props.navigation.navigate('Comments', {
                       eventId: event.eventId,
                     })
                   }>
-                  <View key={event.key}>
+                  <View>
                     <LocationDetailComponent
                       time={
                         new Date(event.startTime).toLocaleTimeString() +
