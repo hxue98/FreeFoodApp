@@ -1,9 +1,38 @@
 import React, {Component} from 'react';
-import {TextInput, Image, StyleSheet, View, Button, Alert} from 'react-native';
+import {
+  TextInput,
+  Image,
+  StyleSheet,
+  View,
+  Button,
+  Alert,
+  PermissionsAndroid,
+} from 'react-native';
 import Hashes from 'jshashes';
 import lambda from '../../api';
 import {connect} from 'react-redux';
 import {storeUserId} from '../../redux/actions';
+
+export async function requestLocationPermission() {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      {
+        title: 'FreeFood App',
+        message: 'FreeFood App access to your location ',
+      },
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log('You can use the location');
+      alert('You can use the location');
+    } else {
+      console.log('location permission denied');
+      alert('Location permission denied');
+    }
+  } catch (err) {
+    console.warn(err);
+  }
+}
 
 async function login(userId, password) {
   const request = {
@@ -24,6 +53,10 @@ class LoginComponent extends Component {
     this.state = {
       password: '',
     };
+  }
+
+  async componentWillMount() {
+    await requestLocationPermission();
   }
 
   checkUserName = function(userId, password) {

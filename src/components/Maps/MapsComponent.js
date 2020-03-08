@@ -6,6 +6,10 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
+  Menu,
+  Text,
+  navigator,
+  Button,
 } from 'react-native';
 import MapView, {PROVIDER_GOOGLE, Marker, Callout} from 'react-native-maps';
 import {TextInput} from 'react-native-gesture-handler';
@@ -14,7 +18,6 @@ import API, {graphqlOperation} from '@aws-amplify/api';
 import {listEvents} from '../../graphql/queries';
 import CreateEvents from '../Events/CreateEvents';
 import store from '../../redux/store';
-
 import LocationDetailComponent from '../LocationDetail/LocationDetailComponent';
 
 export default class MapComponent extends Component {
@@ -142,6 +145,7 @@ export default class MapComponent extends Component {
 }
 
 const window = Dimensions.get('window');
+
 const styles = StyleSheet.create({
   container: {
     height: window.height,
