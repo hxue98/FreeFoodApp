@@ -1,5 +1,14 @@
 import React, {Component} from 'react';
-import {TextInput, Image, StyleSheet, View, Button, Alert} from 'react-native';
+import {
+  TextInput,
+  Text,
+  Image,
+  StyleSheet,
+  View,
+  Button,
+  Alert,
+  TouchableHighlight,
+} from 'react-native';
 import Hashes from 'jshashes';
 import lambda from '../../api';
 
@@ -26,11 +35,8 @@ export default class RegisterComponent extends Component {
   }
 
   checkUserName = function(userId, password) {
-    if (userId === '') {
-      Alert.alert('Error', 'userId name cannot be empty');
-      return false;
-    } else if (password === '') {
-      Alert.alert('Error', 'Password name cannot be empty');
+    if (userId === '' || password === '') {
+      Alert.alert('Error', 'Fields cannot be empty');
       return false;
     }
     return true;
@@ -39,7 +45,10 @@ export default class RegisterComponent extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Image source={require('../../res/images/logo.png')} />
+        <Image
+          style={styles.logo}
+          source={require('../../res/images/logo.png')}
+        />
 
         <TextInput
           style={styles.input}
@@ -50,32 +59,42 @@ export default class RegisterComponent extends Component {
 
         <TextInput
           secureTextEntry={true}
-          style={styles.input}
+          style={{...styles.input, marginBottom: 50}}
           placeholder="Password"
           onChangeText={text => this.setState({password: text})}
           value={this.state.password}
         />
 
-        <Button
-          title="Register"
-          onPress={async () => {
-            if (this.checkUserName(this.state.userId, this.state.password)) {
-              const res = await register(
-                this.state.userId,
-                this.state.password,
-              );
-              if (res.success) {
-                this.props.navigation.replace('Maps');
-              } else {
-                Alert.alert('Error', 'Username is taken');
-              }
-            }
-          }}
-        />
-        <Button
-          title="Return to Login"
-          onPress={() => this.props.navigation.navigate('Login')}
-        />
+        <View style={styles.btns}>
+          <TouchableHighlight style={styles.btn}>
+            <Button
+              title="Register"
+              onPress={async () => {
+                if (
+                  this.checkUserName(this.state.userId, this.state.password)
+                ) {
+                  const res = await register(
+                    this.state.userId,
+                    this.state.password,
+                  );
+                  if (res.success) {
+                    this.props.navigation.replace('Maps');
+                  } else {
+                    Alert.alert('Error', 'Username is taken');
+                  }
+                }
+              }}
+            />
+          </TouchableHighlight>
+          <TouchableHighlight style={styles.btn}>
+            <Button
+              title="Return to Login"
+              onPress={() => this.props.navigation.navigate('Login')}
+            />
+          </TouchableHighlight>
+        </View>
+
+        <Text style={styles.footer}>APP by Team TRIANGLE</Text>
       </View>
     );
   }
@@ -85,11 +104,40 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignSelf: 'center',
-    justifyContent: 'center',
+    height: '100%',
+    width: '100%',
+  },
+  logo: {
+    height: 180,
+    width: 180,
+    alignSelf: 'center',
+    marginTop: 5,
+    marginBottom: 20,
   },
   input: {
     height: 40,
     borderBottomWidth: 1,
     borderColor: '#a6a6a6',
+    width: '75%',
+    alignSelf: 'center',
+    marginTop: 5,
+    marginBottom: 5,
+    fontSize: 18,
+  },
+  btns: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+  },
+  btn: {
+    width: '35%',
+    marginLeft: 5,
+    marginRight: 5,
+  },
+  footer: {
+    color: '#a6a6a699',
+    alignSelf: 'center',
+    position: 'absolute',
+    marginTop: 100,
+    bottom: 10,
   },
 });

@@ -58,6 +58,7 @@ export default class MapComponent extends Component {
     );
 
     const events = await API.graphql(graphqlOperation(listEvents));
+    console.log('map', events.data.listEvents.items);
     this.setState({events: events.data.listEvents.items, queryComplete: true});
   }
   onRegionChange(region) {
@@ -106,6 +107,7 @@ export default class MapComponent extends Component {
                         new Date(event.endTime).toLocaleTimeString()
                       }
                       description={event.description}
+                      address={event.address}
                       style={styles.detail}
                     />
                   </View>

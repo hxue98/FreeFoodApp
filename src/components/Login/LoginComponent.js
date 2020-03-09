@@ -3,11 +3,12 @@ import {
   TextInput,
   Image,
   StyleSheet,
+  Text,
   View,
   Button,
   Alert,
   PermissionsAndroid,
-  platform,
+  TouchableHighlight,
 } from 'react-native';
 import Hashes from 'jshashes';
 import lambda from '../../api';
@@ -23,11 +24,7 @@ export async function requestLocationPermission() {
         message: 'FreeFood App access to your location ',
       },
     );
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      console.log('You can use the location');
-      alert('Location permission allowed');
-    } else {
-      console.log('location permission denied');
+    if (!granted === PermissionsAndroid.RESULTS.GRANTED) {
       alert('Location permission denied');
     }
   } catch (err) {
@@ -64,11 +61,8 @@ class LoginComponent extends Component {
   }
 
   checkUserName = function(userId, password) {
-    if (userId === '') {
-      Alert.alert('Error', 'Username cannot be empty');
-      return false;
-    } else if (password === '') {
-      Alert.alert('Error', 'Password cannot be empty');
+    if (userId === '' || password === '') {
+      Alert.alert('Error', 'Fields cannot be empty');
       return false;
     }
     return true;
@@ -88,7 +82,10 @@ class LoginComponent extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Image source={require('../../res/images/logo.png')} />
+        <Image
+          style={styles.logo}
+          source={require('../../res/images/logo.png')}
+        />
         <TextInput
           style={styles.input}
           placeholder="Username"
@@ -98,23 +95,31 @@ class LoginComponent extends Component {
 
         <TextInput
           secureTextEntry={true}
-          style={styles.input}
+          style={{...styles.input, marginBottom: 50}}
           placeholder="Password"
           onChangeText={text => this.setState({password: text})}
           value={this.props.password}
         />
 
-        <Button
-          title="Login"
-          onPress={() => {
-            this.signin();
-            this.props.storeUserId(this.state.userId);
-          }}
-        />
-        <Button
-          title="Register"
-          onPress={() => this.props.navigation.navigate('Register')}
-        />
+        <View style={styles.btns}>
+          <TouchableHighlight style={styles.btn}>
+            <Button
+              title="Login"
+              onPress={() => {
+                this.signin();
+                this.props.storeUserId(this.state.userId);
+              }}
+            />
+          </TouchableHighlight>
+          <TouchableHighlight style={styles.btn}>
+            <Button
+              title="Register"
+              onPress={() => this.props.navigation.navigate('Register')}
+            />
+          </TouchableHighlight>
+        </View>
+
+        <Text style={styles.footer}>APP by Team TRIANGLE</Text>
       </View>
     );
   }
@@ -138,12 +143,40 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignSelf: 'center',
-    justifyContent: 'center',
+    height: '100%',
+    width: '100%',
   },
-  image: {},
+  logo: {
+    height: 180,
+    width: 180,
+    alignSelf: 'center',
+    marginTop: 5,
+    marginBottom: 20,
+  },
   input: {
     height: 40,
     borderBottomWidth: 1,
     borderColor: '#a6a6a6',
+    width: '75%',
+    alignSelf: 'center',
+    marginTop: 5,
+    marginBottom: 5,
+    fontSize: 18,
+  },
+  btns: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+  },
+  btn: {
+    width: '35%',
+    marginLeft: 5,
+    marginRight: 5,
+  },
+  footer: {
+    color: '#a6a6a699',
+    alignSelf: 'center',
+    position: 'absolute',
+    marginTop: 100,
+    bottom: 10,
   },
 });
