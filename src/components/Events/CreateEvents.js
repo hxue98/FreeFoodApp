@@ -19,6 +19,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import store from '../../redux/store';
 import {GOOGLE_API_KEY} from '../../../config';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import Geolocation from 'react-native-geolocation-service';
 
 async function createNewEvents(
   posterId,
@@ -107,6 +108,29 @@ export default class CreateEvents extends Component {
     });
   };
 
+  getCurrentLocation() {
+    Geolocation.getCurrentPosition(
+      position => {
+        const region = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          latitudeDelta: 0.00822 * 2.5,
+          longitudeDelta: 0.00401 * 2.5,
+          key: 123456,
+        };
+
+        this.setState({
+          latitude: region.latitude,
+          longitude: region.longitude,
+        });
+      },
+      error => {
+        console.error(error.code, error.message);
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
+  }
+
   checkInput(startTime, endTime, description) {
     if (startTime === '') {
       Alert.alert('Error', 'Start Time cannot be empty');
@@ -145,7 +169,17 @@ export default class CreateEvents extends Component {
     }
   }
 
+  async componentDidMount() {
+    this.getCurrentLocation();
+  }
+
   render() {
+    const currentLocation = {
+      description: 'Current location',
+      geometry: {
+        location: {lat: this.state.latitude, lng: this.state.longitude},
+      },
+    };
     return (
       <View style={styles.container}>
         <GooglePlacesAutocomplete
@@ -175,6 +209,10 @@ export default class CreateEvents extends Component {
               color: '#1faadb',
             },
           }}
+          // currentLocation // Will add a 'Current location' button at the top of the predefined places list
+          // currentLocationLabel="Current location"
+          predefinedPlaces={[currentLocation]}
+          predefinedPlacesAlwaysVisible={true}
         />
         <View>
           <TouchableOpacity
