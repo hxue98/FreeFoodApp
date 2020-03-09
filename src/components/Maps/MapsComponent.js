@@ -18,6 +18,8 @@ import API, {graphqlOperation} from '@aws-amplify/api';
 import {listEvents} from '../../graphql/queries';
 import CreateEvents from '../Events/CreateEvents';
 import LocationDetailComponent from '../LocationDetail/LocationDetailComponent';
+import {GOOGLE_API_KEY} from '../../../config';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 
 export default class MapComponent extends Component {
   constructor(props) {
@@ -61,6 +63,20 @@ export default class MapComponent extends Component {
     }
     this.setState({events: events.data.listEvents.items, queryComplete: true});
   }
+  onRegionChange(region) {
+    this.setState({region});
+  }
+  setRegion(details) {
+    this.setState({
+      region: {
+        latitude: details.geometry.location.lat,
+        longitude: details.geometry.location.lng,
+        latitudeDelta: 0.00822 * 2.5,
+        longitudeDelta: 0.00401 * 2.5,
+        key: 123456,
+      },
+    });
+  }
 
   render() {
     const component =
@@ -70,7 +86,7 @@ export default class MapComponent extends Component {
             provider={PROVIDER_GOOGLE}
             initialRegion={this.state.initLocation}
             region={this.state.region}
-            // onRegionChangeComplete={(region) => this.setState({region: region})}
+            onRegionChange={this.state.onRegionChange}
             style={styles.map}>
             {this.state.events.map(event => (
               <Marker
@@ -101,7 +117,47 @@ export default class MapComponent extends Component {
             ))}
             <Marker coordinate={this.state.initLocation} pinColor="blue" />
           </MapView>
-          <View style={styles.search}>
+          <View style={styles.searchContainer}>
+            <GooglePlacesAutocomplete
+              placeholder="Search Location"
+              minLength={2} // minimum length of text to search
+              autoFocus={false}
+              returnKeyType={'search'}
+              listViewDisplayed="true" // true/false/undefined
+              fetchDetails={true}
+              renderDescription={row => row.description} // custom description render
+              onPress={(data, details) => {
+                console.log('hi');
+                this.setRegion(details);
+              }}
+              ref={c => (this.googlePlacesAutocomplete = c)}
+              query={{
+                key: GOOGLE_API_KEY,
+                language: 'en', // language of the results
+                // types: '(cities)', // default: 'geocode'
+              }}
+              styles={{
+                textInputContainer: {
+                  width: '100%',
+                },
+                description: {
+                  fontWeight: 'bold',
+                },
+                predefinedPlacesDescription: {
+                  color: '#1faadb',
+                },
+              }}
+            />
+            <TouchableOpacity
+              onPress={() => this.googlePlacesAutocomplete.setAddressText('')}>
+              <Image
+                style={styles.btn}
+                source={require('../../res/images/clear-search-24.png')}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* <View style={styles.search}>
             <TextInput
               style={styles.input}
               placeholder="Search for address"
@@ -122,7 +178,7 @@ export default class MapComponent extends Component {
                 source={require('../../res/images/search.png')}
               />
             </TouchableOpacity>
-          </View>
+          </View> */}
           <View style={styles.add}>
             <TouchableOpacity
               onPress={() => this.props.navigation.navigate(CreateEvents)}>
@@ -187,5 +243,10 @@ const styles = StyleSheet.create({
     right: 10,
     position: 'absolute',
     bottom: 90,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    // height: 42,
+    width: window.width,
   },
 });
