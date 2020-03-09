@@ -224,9 +224,10 @@ export default class CreateEvents extends Component {
             predefinedPlacesAlwaysVisible={true}
           />
           <TouchableOpacity
-            onPress={() => this.googlePlacesAutocomplete.setAddressText('')}>
+            onPress={() => this.googlePlacesAutocomplete.setAddressText('')}
+            style={styles.cancelSearch}>
             <Image
-              style={styles.btn}
+              style={styles.cancelSearchImage}
               source={require('../../res/images/clear-search-24.png')}
             />
           </TouchableOpacity>
@@ -301,12 +302,19 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 18,
-    color: 'black',
-    // textAlign: 'center',
+    color: 'black'
   },
   searchContainer: {
     flexDirection: 'row',
-    // height: 42,
-    width: window.width,
+    width: window.width
   },
+  cancelSearch: {
+    marginTop: 9,
+    right: 10,
+    position: 'absolute'
+  },
+  cancelSearchImage: {
+    width: 25,
+    height: 25
+  }
 });

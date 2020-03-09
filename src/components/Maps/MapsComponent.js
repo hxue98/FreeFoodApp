@@ -126,16 +126,17 @@ export default class MapComponent extends Component {
               fetchDetails={true}
               renderDescription={row => row.description} // custom description render
               onPress={(data, details) => {
-                console.log('hi');
                 this.setRegion(details);
               }}
               ref={c => (this.googlePlacesAutocomplete = c)}
               query={{
                 key: GOOGLE_API_KEY,
-                language: 'en', // language of the results
-                // types: '(cities)', // default: 'geocode'
+                language: 'en',
               }}
               styles={{
+                container: {
+                    backgroundColor: '#ffffffd3'
+                },
                 textInputContainer: {
                   width: '100%',
                 },
@@ -148,36 +149,14 @@ export default class MapComponent extends Component {
               }}
             />
             <TouchableOpacity
-              onPress={() => this.googlePlacesAutocomplete.setAddressText('')}>
+              onPress={() => this.googlePlacesAutocomplete.setAddressText('')}
+              style={styles.cancelSearch}>
               <Image
-                style={styles.btn}
+                style={styles.cancelSearchImage}
                 source={require('../../res/images/clear-search-24.png')}
               />
             </TouchableOpacity>
           </View>
-
-          {/* <View style={styles.search}>
-            <TextInput
-              style={styles.input}
-              placeholder="Search for address"
-              value={this.state.search}
-              onChangeText={text => {
-                this.setState({search: text});
-              }}
-              onSubmitEditing={text => {
-                this.setState({search: ''});
-              }}
-            />
-            <TouchableOpacity
-              onPress={() => {
-                this.setState({search: ''});
-              }}>
-              <Image
-                style={styles.btn}
-                source={require('../../res/images/search.png')}
-              />
-            </TouchableOpacity>
-          </View> */}
           <View style={styles.add}>
             <TouchableOpacity
               onPress={() => this.props.navigation.navigate(CreateEvents)}>
@@ -245,7 +224,15 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     flexDirection: 'row',
-    // height: 42,
-    width: window.width,
+    width: window.width
   },
+  cancelSearch: {
+    marginTop: 9,
+    right: 10,
+    position: 'absolute'
+  },
+  cancelSearchImage: {
+    width: 25,
+    height: 25
+  }
 });
