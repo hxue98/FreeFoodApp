@@ -21,7 +21,6 @@ import MapsComponent from './src/components/Maps/MapsComponent';
 import RegisterComponent from './src/components/Login/RegisterComponent';
 import LoginComponent from './src/components/Login/LoginComponent';
 import CreateEvents from './src/components/Events/CreateEvents';
-import LocationItem from './src/components/LocationDetail/LocationItem';
 import {Provider} from 'react-redux';
 import store from './src/redux/store';
 API.configure(config); // Configure Amplify
@@ -46,7 +45,6 @@ export default function App() {
           <Stack.Screen name="Detail" component={LocationDetailComponent} />
           <Stack.Screen name="Comments" component={CommentComponent} />
           <Stack.Screen name="CreateEvents" component={CreateEvents} />
-          <Stack.Screen name="LocationItem" component={LocationItem} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

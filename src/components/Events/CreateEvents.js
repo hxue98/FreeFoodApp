@@ -28,6 +28,7 @@ async function createNewEvents(
   endTime,
   latitude,
   longitude,
+  address,
 ) {
   const event = {
     eventId: 0,
@@ -37,6 +38,7 @@ async function createNewEvents(
     endTime: endTime,
     latitude: latitude,
     longitude: longitude,
+    address: address,
     upvote: 0,
     downvote: 0,
   };
@@ -58,13 +60,15 @@ export default class CreateEvents extends Component {
       isEndVisible: false,
       chosenStartDate: '',
       chosenEndDate: '',
+      address: '',
     };
   }
 
-  setLocation(details) {
+  setLocation(details, data) {
     this.setState({
       latitude: details.geometry.location.lat,
       longitude: details.geometry.location.lng,
+      address: data.description,
     });
   }
 
@@ -160,6 +164,7 @@ export default class CreateEvents extends Component {
         this.state.endTime,
         this.state.latitude,
         this.state.longitude,
+        this.state.address,
       ).catch(err => console.log(err));
       if (res) {
         this.props.navigation.replace('Maps');
@@ -192,7 +197,9 @@ export default class CreateEvents extends Component {
             fetchDetails={true}
             renderDescription={row => row.description} // custom description render
             onPress={(data, details) => {
-              this.setLocation(details);
+              // console.log(data);
+              console.log('hi', data);
+              this.setLocation(details, data);
             }}
             ref={c => (this.googlePlacesAutocomplete = c)}
             query={{

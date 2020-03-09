@@ -7,6 +7,7 @@ import {
   Button,
   Alert,
   PermissionsAndroid,
+  platform,
 } from 'react-native';
 import Hashes from 'jshashes';
 import lambda from '../../api';
@@ -24,7 +25,7 @@ export async function requestLocationPermission() {
     );
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
       console.log('You can use the location');
-      alert('You can use the location');
+      alert('Location permission allowed');
     } else {
       console.log('location permission denied');
       alert('Location permission denied');
@@ -55,8 +56,11 @@ class LoginComponent extends Component {
     };
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     await requestLocationPermission();
+    // if (platform.OS === 'android') {
+    //   await requestLocationPermission();
+    // }
   }
 
   checkUserName = function(userId, password) {

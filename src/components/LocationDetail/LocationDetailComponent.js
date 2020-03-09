@@ -9,7 +9,7 @@ export default class LocationDetailComponent extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {/* <Text style={styles.address}>Address: {this.props.address}</Text> */}
+        <Text style={styles.address}>Address: {this.props.address}</Text>
         <Text style={styles.time}>Time: {this.props.time}</Text>
         <Text style={styles.notes}>Description: {this.props.description}</Text>
         <Button title="Comment" style={styles.btn} />

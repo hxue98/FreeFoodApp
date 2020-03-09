@@ -20,6 +20,7 @@ export const createEvent = /* GraphQL */ `
       description
       downvote
       endTime
+      address
       eventId
       latitude
       longitude
@@ -48,6 +49,7 @@ export const deleteEvent = /* GraphQL */ `
       description
       downvote
       endTime
+      address
       eventId
       latitude
       longitude
@@ -76,6 +78,7 @@ export const updateEvent = /* GraphQL */ `
       description
       downvote
       endTime
+      address
       eventId
       latitude
       longitude

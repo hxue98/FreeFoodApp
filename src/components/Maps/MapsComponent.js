@@ -58,9 +58,6 @@ export default class MapComponent extends Component {
     );
 
     const events = await API.graphql(graphqlOperation(listEvents));
-    for (let i = 0; i < events.length; i++) {
-      event[i].key = event[i].eventId;
-    }
     this.setState({events: events.data.listEvents.items, queryComplete: true});
   }
   onRegionChange(region) {
