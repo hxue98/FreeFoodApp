@@ -89,7 +89,7 @@ class LoginComponent extends Component {
           style={styles.input}
           placeholder="Username"
           onChangeText={text => this.setState({userId: text})}
-          value={this.props.userId}
+          value={this.state.userId}
         />
 
         <TextInput
