@@ -28,9 +28,6 @@ async function createNewEvents(
   latitude,
   longitude,
 ) {
-  if (text == '') {
-    return;
-  }
   const event = {
     eventId: 0,
     posterId: posterId,
@@ -43,6 +40,7 @@ async function createNewEvents(
     downvote: 0,
   };
   await API.graphql(graphqlOperation(createEvent, {input: event}));
+  return true;
 }
 
 export default class CreateEvents extends Component {
@@ -109,6 +107,44 @@ export default class CreateEvents extends Component {
     });
   };
 
+  checkInput(startTime, endTime, description) {
+    if (startTime === '') {
+      Alert.alert('Error', 'Start Time cannot be empty');
+      return false;
+    } else if (endTime === '') {
+      Alert.alert('Error', 'End Time cannot be empty');
+      return false;
+    } else if (description === '') {
+      Alert.alert('Error', 'Description cannot be empty');
+      return false;
+    }
+    return true;
+  }
+
+  async confirmed() {
+    if (
+      this.checkInput(
+        this.state.chosenStartDate,
+        this.state.chosenEndDate,
+        this.state.eventText,
+      )
+    ) {
+      const res = await createNewEvents(
+        store.getState().userId,
+        this.state.eventText,
+        this.state.startTime,
+        this.state.endTime,
+        this.state.latitude,
+        this.state.longitude,
+      ).catch(err => console.log(err));
+      if (res) {
+        this.props.navigation.replace('Maps');
+      } else {
+        Alert.alert('Error', 'Invalid Start time or End time or Description');
+      }
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -174,22 +210,14 @@ export default class CreateEvents extends Component {
             onChangeText={text => this.setState({eventText: text})}
             value={this.state.eventText}
           />
-          <TouchableOpacity
+
+          <Button
+            style={{alignSelf: 'center', fontSize: 20}}
             onPress={() => {
-              createNewEvents(
-                store.getState().userId,
-                this.state.eventText,
-                this.state.startTime,
-                this.state.endTime,
-                this.state.latitude,
-                this.state.longitude,
-              ).catch(err => console.log(err));
-              setTimeout(() => {
-                this.props.navigation.replace('Maps');
-              }, 300);
-            }}>
-            <Text style={{alignSelf: 'center', fontSize: 20}}>Confirm</Text>
-          </TouchableOpacity>
+              this.confirmed();
+            }}
+            title="Confirm"
+          />
         </View>
       </View>
     );
