@@ -182,41 +182,52 @@ export default class CreateEvents extends Component {
     };
     return (
       <View style={styles.container}>
-        <GooglePlacesAutocomplete
-          placeholder="Search Location"
-          minLength={2} // minimum length of text to search
-          autoFocus={false}
-          returnKeyType={'search'}
-          listViewDisplayed="true" // true/false/undefined
-          fetchDetails={true}
-          renderDescription={row => row.description} // custom description render
-          onPress={(data, details) => {
-            this.setLocation(details);
-          }}
-          query={{
-            key: GOOGLE_API_KEY,
-            language: 'en', // language of the results
-            // types: '(cities)', // default: 'geocode'
-          }}
-          styles={{
-            textInputContainer: {
-              width: '100%',
-            },
-            description: {
-              fontWeight: 'bold',
-            },
-            predefinedPlacesDescription: {
-              color: '#1faadb',
-            },
-          }}
-          // currentLocation // Will add a 'Current location' button at the top of the predefined places list
-          // currentLocationLabel="Current location"
-          predefinedPlaces={[currentLocation]}
-          predefinedPlacesAlwaysVisible={true}
-        />
+        <View style={styles.searchContainer}>
+          <GooglePlacesAutocomplete
+            placeholder="Search Location"
+            minLength={2} // minimum length of text to search
+            autoFocus={false}
+            returnKeyType={'search'}
+            listViewDisplayed="true" // true/false/undefined
+            fetchDetails={true}
+            renderDescription={row => row.description} // custom description render
+            onPress={(data, details) => {
+              this.setLocation(details);
+            }}
+            ref={c => (this.googlePlacesAutocomplete = c)}
+            query={{
+              key: GOOGLE_API_KEY,
+              language: 'en', // language of the results
+              // types: '(cities)', // default: 'geocode'
+            }}
+            styles={{
+              textInputContainer: {
+                width: '100%',
+              },
+              description: {
+                fontWeight: 'bold',
+              },
+              predefinedPlacesDescription: {
+                color: '#1faadb',
+              },
+            }}
+            // currentLocation // Will add a 'Current location' button at the top of the predefined places list
+            // currentLocationLabel="Current location"
+            predefinedPlaces={[currentLocation]}
+            predefinedPlacesAlwaysVisible={true}
+          />
+          <TouchableOpacity
+            onPress={() => this.googlePlacesAutocomplete.setAddressText('')}>
+            <Image
+              style={styles.btn}
+              source={require('../../res/images/clear-search-24.png')}
+            />
+          </TouchableOpacity>
+        </View>
+
         <View>
           <TouchableOpacity
-            style={{borderWidth: 3}}
+            style={{borderWidth: 1, marginTop: 15}}
             onPress={this.showStartPicker}>
             <DateTimePickerModal
               isVisible={this.state.isVisible}
@@ -225,10 +236,12 @@ export default class CreateEvents extends Component {
               mode="datetime"
               is24Hour={false}
             />
-            <Text>{'Start Time: ' + this.state.chosenStartDate}</Text>
+            <Text style={styles.text}>
+              {'Start Time: ' + this.state.chosenStartDate}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={{borderWidth: 3}}
+            style={{borderWidth: 1, marginTop: 15}}
             onPress={this.showEndPicker}>
             <DateTimePickerModal
               isVisible={this.state.isEndVisible}
@@ -237,7 +250,9 @@ export default class CreateEvents extends Component {
               mode="datetime"
               is24Hour={false}
             />
-            <Text>{'End Time: ' + this.state.chosenEndDate}</Text>
+            <Text style={styles.text}>
+              {'End Time: ' + this.state.chosenEndDate}
+            </Text>
           </TouchableOpacity>
           <TextInput
             style={styles.description}
@@ -250,7 +265,7 @@ export default class CreateEvents extends Component {
           />
 
           <Button
-            style={{alignSelf: 'center', fontSize: 20}}
+            style={{fontSize: 18, marginTop: 35}}
             onPress={() => {
               this.confirmed();
             }}
@@ -265,8 +280,8 @@ export default class CreateEvents extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignSelf: 'center',
-    justifyContent: 'center',
+    // alignSelf: 'center',
+    // justifyContent: 'center',
     width: '100%',
   },
   description: {
@@ -274,11 +289,17 @@ const styles = StyleSheet.create({
     width: '100%',
     borderWidth: 3,
     borderColor: '#a6a6a6',
-    fontSize: 20,
+    fontSize: 18,
+    marginTop: 15,
   },
   text: {
     fontSize: 18,
-    color: 'white',
-    textAlign: 'center',
+    color: 'black',
+    // textAlign: 'center',
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    // height: 42,
+    width: window.width,
   },
 });
