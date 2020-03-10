@@ -9,11 +9,13 @@ import {
   Alert,
   PermissionsAndroid,
   TouchableHighlight,
+  Platform
 } from 'react-native';
 import Hashes from 'jshashes';
 import lambda from '../../api';
 import {connect} from 'react-redux';
 import {storeUserId} from '../../redux/actions';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export async function requestLocationPermission() {
   try {
@@ -42,6 +44,11 @@ async function login(userId, password) {
   };
 
   const response = await lambda(request);
+  try {
+    AsyncStorage.setItem('@token', response.token);
+  } catch (e) {
+    console.error(e);
+  }
   return response;
 }
 
@@ -54,10 +61,16 @@ class LoginComponent extends Component {
   }
 
   async componentDidMount() {
-    await requestLocationPermission();
-    // if (platform.OS === 'android') {
-    //   await requestLocationPermission();
-    // }
+    if (Platform.OS === 'android') {
+      await requestLocationPermission();
+    }
+
+    try {
+      const token = await AsyncStorage.getItem('@token');
+      this.checkToken(token);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   checkUserName = function(userId, password) {
@@ -78,6 +91,21 @@ class LoginComponent extends Component {
       }
     }
   };
+
+  checkToken = async function(token) {
+    const request = {
+      operation: 'CHECKTOKEN',
+      params: {
+        token: token
+      },
+    };
+
+    const response = await lambda(request);
+    if (response.success) {
+      this.props.storeUserId(response.userId);
+      this.props.navigation.replace('Maps');
+    }
+  }
 
   render() {
     return (

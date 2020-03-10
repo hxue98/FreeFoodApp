@@ -1,10 +1,16 @@
 const AWS = require(`aws-sdk`);
-const Hashes = require('jshashes')
+const Hashes = require('jshashes');
+const JWT = require('jsonwebtoken');
+const FS = require('fs');
+
+const privateKey = FS.readFileSync(__dirname + '\/private.key');
+const expiresIn = '7d';
 
 AWS.config.update({region: `us-east-1`});
 const db = new AWS.DynamoDB.DocumentClient();
 
 const ACCOUNT_TABLE_NAME = 'Account';
+const COMMENT_TABLE_NAME = "Comment";
 
 exports.handler = async function(event, context) {
     //for debug use
@@ -59,7 +65,26 @@ exports.handler = async function(event, context) {
                 return sendResponse(null, false);
             }
 
-            return sendResponse(null, user.password == Item.password);
+            if (user.password === Item.password) {
+                const token = JWT.sign({userId: user.userId}, privateKey, {expiresIn: expiresIn});
+                return sendResponse({token: token}, true);
+            }
+            return sendResponse(null, false);
+        }
+
+        case 'CHECKTOKEN': {
+            console.log("check-token");
+            const decoded = JWT.verify(data.params.token, privateKey);
+            if (decoded) {
+                return sendResponse({userId: decoded.userId}, true);
+            }
+            return sendResponse(null, false);
+        }
+
+        case 'GETCOMMENTS': {
+            console.log("get-comments-event");
+            let comments = await getComments(data.params.eventId);
+            return sendResponse({comments: comments}, true);
         }
 
         default: {
@@ -68,6 +93,8 @@ exports.handler = async function(event, context) {
         }
     }
 };
+
+
 
 //------------------------------------helper functions------------------------------//
 
@@ -93,6 +120,20 @@ async function getUser(userId) {
         user = data.Item;
     }).promise();
     return user;
+}
+
+async function getComments(eventId) {
+    const query = {
+        TableName: COMMENT_TABLE_NAME
+    };
+    var comments;
+    await db.scan(query, function(err, data) {
+        if (err) {
+            console.log(`error`, err);
+        }
+        comments = data.Items;
+    }).promise();
+    return comments.filter(comment => comment.eventId === eventId);
 }
 
 function sendResponse(body, success) {
