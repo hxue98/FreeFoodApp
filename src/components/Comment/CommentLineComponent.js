@@ -78,11 +78,11 @@ const styles = StyleSheet.create({
   username: {
     flex: 0.5,
     fontWeight: 'bold',
-    fontSize: 15,
+    fontSize: 16,
   },
   comment: {
     flex: 3,
-    fontSize: 13,
+    fontSize: 14,
   },
   bottomRow: {
     flex: 0.5,

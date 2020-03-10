@@ -4,7 +4,6 @@ import API, {graphqlOperation} from '@aws-amplify/api';
 import {createComment} from '../../graphql/mutations';
 import store from '../../redux/store';
 
-//TODO - replace hardcoded eventId/userId
 async function createNewComment(userId, eventId, text, date) {
   if (text == '') {
     return;

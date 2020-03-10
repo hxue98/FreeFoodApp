@@ -31,6 +31,8 @@ export default class MapComponent extends Component {
       locationFetchCompolete: false,
       queryComplete: false,
       search: '',
+      showDetail: false,
+      eventDetail: null
     };
   }
 
@@ -58,7 +60,6 @@ export default class MapComponent extends Component {
     );
 
     const events = await API.graphql(graphqlOperation(listEvents));
-    console.log('map', events.data.listEvents.items);
     this.setState({events: events.data.listEvents.items, queryComplete: true});
   }
   onRegionChange(region) {
@@ -76,6 +77,27 @@ export default class MapComponent extends Component {
     });
   }
 
+  showDetail(event) {
+    if (this.state.eventDetail) {
+        this.setState({
+            eventDetail: null
+        });
+    }
+    this.setState({
+        eventDetail: {...event}
+    });
+  }
+
+  hideDetail() {
+    this.setState({
+        eventDetail: null
+    });
+  }
+
+  navigateToComment = (eventId) => {
+    this.props.navigation.navigate('Comments', {eventId: eventId});
+  }
+
   render() {
     const component =
       this.state.locationFetchCompolete && this.state.queryComplete ? (
@@ -84,37 +106,21 @@ export default class MapComponent extends Component {
             provider={PROVIDER_GOOGLE}
             initialRegion={this.state.initLocation}
             region={this.state.region}
-            onRegionChange={this.state.onRegionChange}
-            style={styles.map}>
+            onRegionChangeComplete={region => this.onRegionChange(region)}
+            style={styles.map}
+            onPress={() => this.hideDetail()}
+          >
             {this.state.events.map(event => (
               <Marker
                 coordinate={{
                   latitude: event.latitude,
                   longitude: event.longitude,
                 }}
-                key={event.eventId}>
-                <Callout
-                  onPress={() =>
-                    this.props.navigation.navigate('Comments', {
-                      eventId: event.eventId,
-                    })
-                  }>
-                  <View>
-                    <LocationDetailComponent
-                      time={
-                        new Date(event.startTime).toLocaleTimeString() +
-                        ' - ' +
-                        new Date(event.endTime).toLocaleTimeString()
-                      }
-                      description={event.description}
-                      address={event.address}
-                      style={styles.detail}
-                    />
-                  </View>
-                </Callout>
-              </Marker>
+                key={event.eventId}
+                onPress={() => this.showDetail(event)}
+              />
             ))}
-            <Marker coordinate={this.state.initLocation} pinColor="blue" />
+            <Marker coordinate={this.state.initLocation} pinColor="blue" onPress={() => this.hideDetail()}/>
           </MapView>
           <View style={styles.searchContainer}>
             <GooglePlacesAutocomplete
@@ -166,6 +172,23 @@ export default class MapComponent extends Component {
               />
             </TouchableOpacity>
           </View>
+          { this.state.eventDetail !== null &&
+            <View style={styles.detail}>
+                <LocationDetailComponent
+                      eventId={this.state.eventDetail.eventId}
+                      time={
+                        new Date(this.state.eventDetail.startTime).toLocaleDateString() +
+                        '                 ' +
+                        new Date(this.state.eventDetail.startTime).toLocaleTimeString().substring(0, 5) +
+                        ' - ' +
+                        new Date(this.state.eventDetail.endTime).toLocaleTimeString().substring(0, 5)
+                      }
+                      description={this.state.eventDetail.description}
+                      address={this.state.eventDetail.address}
+                      navigateToComment={this.navigateToComment}
+                    />
+            </View>
+          }
         </View>
       ) : (
         <View style={styles.loading}>
@@ -212,7 +235,14 @@ const styles = StyleSheet.create({
     width: 30,
     marginTop: 7,
   },
-  detail: {},
+  detail: {
+    width: '90%',
+    backgroundColor: '#dbd9cedf',
+    alignSelf: 'center',
+    position: 'absolute',
+    bottom: 60,
+    borderRadius: 11
+  },
   add: {
     height: 50,
     width: 50,
@@ -220,7 +250,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     right: 10,
     position: 'absolute',
-    bottom: 90,
+    top: 60,
   },
   searchContainer: {
     flexDirection: 'row',

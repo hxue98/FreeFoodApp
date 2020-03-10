@@ -119,7 +119,9 @@ class LoginComponent extends Component {
           </TouchableHighlight>
         </View>
 
-        <Text style={styles.footer}>APP by Team TRIANGLE</Text>
+        <View style={styles.footer}>
+            <Text style={styles.footerText}>APP by Team TRIANGLE</Text>
+        </View>
       </View>
     );
   }
@@ -141,7 +143,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(LoginComponent);
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignSelf: 'center',
     height: '100%',
     width: '100%',
@@ -164,6 +165,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   btns: {
+    flex: 1,
     flexDirection: 'row',
     alignSelf: 'center',
   },
@@ -173,10 +175,10 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   footer: {
-    color: '#a6a6a699',
-    alignSelf: 'center',
-    position: 'absolute',
-    marginTop: 100,
-    bottom: 10,
+    flex: .1,
+    alignSelf: 'center'
   },
+  footerText: {
+    color: '#a6a6a699'
+  }
 });
