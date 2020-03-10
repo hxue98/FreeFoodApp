@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Dimensions, Text, TouchableHighlight, Button} from 'react-native';
+import {View, StyleSheet, Dimensions, Text, TouchableHighlight, Button, Linking} from 'react-native';
 
 export default class LocationDetailComponent extends Component {
   constructor(props) {
@@ -9,7 +9,7 @@ export default class LocationDetailComponent extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.address}>{this.props.address}</Text>
+        <Text style={styles.address} onPress={() => Linking.openURL('http://maps.google.com/maps?daddr=' + this.props.address)}>{this.props.address}</Text>
         <Text style={styles.time}>Time: {this.props.time}</Text>
         <Text style={styles.notes}>Description: {this.props.description}</Text>
         <TouchableHighlight style={styles.btn}>
