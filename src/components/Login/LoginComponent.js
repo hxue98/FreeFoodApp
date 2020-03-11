@@ -9,6 +9,7 @@ import {
   Alert,
   PermissionsAndroid,
   TouchableHighlight,
+  Platform,
 } from 'react-native';
 import Hashes from 'jshashes';
 import lambda from '../../api';
@@ -53,11 +54,17 @@ class LoginComponent extends Component {
     };
   }
 
+  showLogo() {
+    <Image
+      style={{width: 430, height: 450}}
+      source={require('../../res/images/team-logo.png')}
+    />;
+  }
+
   async componentDidMount() {
-    await requestLocationPermission();
-    // if (platform.OS === 'android') {
-    //   await requestLocationPermission();
-    // }
+    if (Platform.OS === 'android') {
+      await requestLocationPermission();
+    }
   }
 
   checkUserName = function(userId, password) {

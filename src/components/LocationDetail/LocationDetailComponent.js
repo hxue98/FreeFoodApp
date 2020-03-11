@@ -12,7 +12,6 @@ export default class LocationDetailComponent extends Component {
         <Text style={styles.address}>Address: {this.props.address}</Text>
         <Text style={styles.time}>Time: {this.props.time}</Text>
         <Text style={styles.notes}>Description: {this.props.description}</Text>
-        <Button title="Comment" style={styles.btn} />
       </View>
     );
   }
@@ -45,6 +44,6 @@ const styles = StyleSheet.create({
   btn: {
     flex: 1,
     borderRadius: 10,
-    maxWidth: 1,
+    // maxWidth: 5,
   },
 });

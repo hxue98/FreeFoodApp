@@ -239,7 +239,7 @@ export default class CreateEvents extends Component {
             <DateTimePickerModal
               isVisible={this.state.isVisible}
               onConfirm={this.startPicker}
-              onCancel={this.hideEndPicker}
+              onCancel={this.hideStartPicker}
               mode="datetime"
               is24Hour={false}
             />

@@ -14,7 +14,7 @@ import config from './aws-exports';
 import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-
+import Loading from './src/components/Loading/Loading';
 import CommentComponent from './src/components/Comment/CommentComponent';
 import LocationDetailComponent from './src/components/LocationDetail/LocationDetailComponent';
 import MapsComponent from './src/components/Maps/MapsComponent';
@@ -34,7 +34,8 @@ export default function App() {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator>
+        <Stack.Navigator navigationOptions={{headerShown: false}}>
+          {/* <Stack.Screen name="Loading" component={Loading} /> */}
           <Stack.Screen name="Login" component={LoginComponent} />
           <Stack.Screen name="Register" component={RegisterComponent} />
           <Stack.Screen

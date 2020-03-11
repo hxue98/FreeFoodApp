@@ -10,8 +10,15 @@ import {
   Text,
   navigator,
   Button,
+  Alert,
 } from 'react-native';
-import MapView, {PROVIDER_GOOGLE, Marker, Callout} from 'react-native-maps';
+import MapView, {
+  PROVIDER_GOOGLE,
+  Marker,
+  Callout,
+  CalloutSubview,
+  Link,
+} from 'react-native-maps';
 import {TextInput} from 'react-native-gesture-handler';
 import Geolocation from 'react-native-geolocation-service';
 import API, {graphqlOperation} from '@aws-amplify/api';
@@ -20,6 +27,7 @@ import CreateEvents from '../Events/CreateEvents';
 import LocationDetailComponent from '../LocationDetail/LocationDetailComponent';
 import {GOOGLE_API_KEY} from '../../../config';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import getDirections from 'react-native-google-maps-directions';
 
 export default class MapComponent extends Component {
   constructor(props) {
@@ -34,7 +42,7 @@ export default class MapComponent extends Component {
     };
   }
 
-  async componentDidMount() {
+  getCurrentLocation() {
     Geolocation.getCurrentPosition(
       position => {
         const region = {
@@ -56,9 +64,12 @@ export default class MapComponent extends Component {
       },
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
+  }
 
+  async componentDidMount() {
+    this.getCurrentLocation();
     const events = await API.graphql(graphqlOperation(listEvents));
-    console.log('map', events.data.listEvents.items);
+    // console.log('map', events.data.listEvents.items);
     this.setState({events: events.data.listEvents.items, queryComplete: true});
   }
   onRegionChange(region) {
@@ -73,6 +84,51 @@ export default class MapComponent extends Component {
         longitudeDelta: 0.00401 * 2.5,
         key: 123456,
       },
+    });
+  }
+
+  handleGetDirections() {
+    const data = {
+      source: {
+        latitude: -33.8356372,
+        longitude: 18.6947617,
+      },
+      destination: {
+        latitude: -33.8600024,
+        longitude: 18.697459,
+      },
+      params: [
+        {
+          key: 'travelmode',
+          value: 'walking', // may be "driving", "bicycling" or "transit" as well
+        },
+        {
+          key: 'dir_action',
+          value: 'navigate', // this instantly initializes navigation using the given travel mode
+        },
+      ],
+      waypoints: [
+        {
+          latitude: -33.8600025,
+          longitude: 18.697452,
+        },
+        {
+          latitude: -33.8600026,
+          longitude: 18.697453,
+        },
+        {
+          latitude: -33.8600036,
+          longitude: 18.697493,
+        },
+      ],
+    };
+
+    getDirections(data);
+  }
+
+  handlerCommemt(event) {
+    this.props.navigation.navigate('Comments', {
+      eventId: event.eventId,
     });
   }
 
@@ -93,12 +149,7 @@ export default class MapComponent extends Component {
                   longitude: event.longitude,
                 }}
                 key={event.eventId}>
-                <Callout
-                  onPress={() =>
-                    this.props.navigation.navigate('Comments', {
-                      eventId: event.eventId,
-                    })
-                  }>
+                <Callout>
                   <View>
                     <LocationDetailComponent
                       time={
@@ -109,6 +160,8 @@ export default class MapComponent extends Component {
                       description={event.description}
                       address={event.address}
                       style={styles.detail}
+                      // handleGetDirections={this.handleGetDirections()}
+                      // handlerCommemt={this.handlerCommemt(event)}
                     />
                   </View>
                 </Callout>
@@ -156,28 +209,6 @@ export default class MapComponent extends Component {
             </TouchableOpacity>
           </View>
 
-          {/* <View style={styles.search}>
-            <TextInput
-              style={styles.input}
-              placeholder="Search for address"
-              value={this.state.search}
-              onChangeText={text => {
-                this.setState({search: text});
-              }}
-              onSubmitEditing={text => {
-                this.setState({search: ''});
-              }}
-            />
-            <TouchableOpacity
-              onPress={() => {
-                this.setState({search: ''});
-              }}>
-              <Image
-                style={styles.btn}
-                source={require('../../res/images/search.png')}
-              />
-            </TouchableOpacity>
-          </View> */}
           <View style={styles.add}>
             <TouchableOpacity
               onPress={() => this.props.navigation.navigate(CreateEvents)}>
