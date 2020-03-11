@@ -1,18 +1,14 @@
 import React, {Component} from 'react';
 import {
+  Alert,
   View,
   StyleSheet,
   Dimensions,
   Image,
   TouchableOpacity,
   ActivityIndicator,
-  Menu,
-  Text,
-  navigator,
-  Button,
 } from 'react-native';
-import MapView, {PROVIDER_GOOGLE, Marker, Callout} from 'react-native-maps';
-import {TextInput} from 'react-native-gesture-handler';
+import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 import API, {graphqlOperation} from '@aws-amplify/api';
 import {listEvents} from '../../graphql/queries';
@@ -20,9 +16,35 @@ import CreateEvents from '../Events/CreateEvents';
 import LocationDetailComponent from '../LocationDetail/LocationDetailComponent';
 import {GOOGLE_API_KEY} from '../../../config';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import * as Animatable from "react-native-animatable";
+import AsyncStorage from '@react-native-community/async-storage';
 
 export default class MapComponent extends Component {
   constructor(props) {
+    props.navigation.setOptions({
+        headerRight: () => (
+            <TouchableOpacity
+                style={styles.logout}
+                onPress={async () => {
+                    Alert.alert(
+                        'Log out',
+                        'Are you sure to log out?',
+                        [
+                          {text: 'Cancel'},
+                          {text: 'OK', onPress: async () => {
+                            await AsyncStorage.removeItem('@token');
+                            this.props.navigation.replace('Login');
+                          }}
+                        ]
+                    );
+                }}>
+                <Image
+                    style={styles.logoutImage}
+                    source={require('../../res/images/logout.png')}
+                />
+            </TouchableOpacity>
+        )
+    });
     super(props);
     this.state = {
       initLocation: null,
@@ -31,7 +53,6 @@ export default class MapComponent extends Component {
       locationFetchCompolete: false,
       queryComplete: false,
       search: '',
-      showDetail: false,
       eventDetail: null
     };
   }
@@ -163,17 +184,17 @@ export default class MapComponent extends Component {
               />
             </TouchableOpacity>
           </View>
-          <View style={styles.add}>
+          <View style={styles.addBtn}>
             <TouchableOpacity
               onPress={() => this.props.navigation.navigate(CreateEvents)}>
               <Image
-                // style={styles.add}
+                style={styles.addImage}
                 source={require('../../res/images/add-50.png')}
               />
             </TouchableOpacity>
           </View>
           { this.state.eventDetail !== null &&
-            <View style={styles.detail}>
+            <Animatable.View style={styles.detail} animation="fadeInUp" duration={500}>
                 <LocationDetailComponent
                       eventId={this.state.eventDetail.eventId}
                       time={
@@ -187,7 +208,7 @@ export default class MapComponent extends Component {
                       address={this.state.eventDetail.address}
                       navigateToComment={this.navigateToComment}
                     />
-            </View>
+            </Animatable.View>
           }
         </View>
       ) : (
@@ -243,14 +264,14 @@ const styles = StyleSheet.create({
     bottom: 60,
     borderRadius: 11
   },
-  add: {
-    height: 50,
-    width: 50,
-    justifyContent: 'center',
-    alignSelf: 'flex-end',
-    right: 10,
+  addBtn: {
+    right: 20,
     position: 'absolute',
-    top: 60,
+    bottom: 60
+  },
+  addImage: {
+    height: 50,
+    width: 50
   },
   searchContainer: {
     flexDirection: 'row',
@@ -263,6 +284,14 @@ const styles = StyleSheet.create({
   },
   cancelSearchImage: {
     width: 25,
-    height: 25
+    height: 25,
+    opacity: .2
+  },
+  logout: {
+    right: 10
+  },
+  logoutImage: {
+    width: 40,
+    height: 40
   }
 });
