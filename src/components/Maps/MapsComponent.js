@@ -1,25 +1,14 @@
 import React, {Component} from 'react';
 import {
+  Alert,
   View,
   StyleSheet,
   Dimensions,
   Image,
   TouchableOpacity,
   ActivityIndicator,
-  Menu,
-  Text,
-  navigator,
-  Button,
-  Alert,
 } from 'react-native';
-import MapView, {
-  PROVIDER_GOOGLE,
-  Marker,
-  Callout,
-  CalloutSubview,
-  Link,
-} from 'react-native-maps';
-import {TextInput} from 'react-native-gesture-handler';
+import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 import API, {graphqlOperation} from '@aws-amplify/api';
 import {listEvents} from '../../graphql/queries';
@@ -27,10 +16,34 @@ import CreateEvents from '../Events/CreateEvents';
 import LocationDetailComponent from '../LocationDetail/LocationDetailComponent';
 import {GOOGLE_API_KEY} from '../../../config';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
-import getDirections from 'react-native-google-maps-directions';
+import * as Animatable from 'react-native-animatable';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export default class MapComponent extends Component {
   constructor(props) {
+    props.navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          style={styles.logout}
+          onPress={async () => {
+            Alert.alert('Log out', 'Are you sure to log out?', [
+              {text: 'Cancel'},
+              {
+                text: 'OK',
+                onPress: async () => {
+                  await AsyncStorage.removeItem('@token');
+                  this.props.navigation.replace('Login');
+                },
+              },
+            ]);
+          }}>
+          <Image
+            style={styles.logoutImage}
+            source={require('../../res/images/logout.png')}
+          />
+        </TouchableOpacity>
+      ),
+    });
     super(props);
     this.state = {
       initLocation: null,
@@ -39,6 +52,7 @@ export default class MapComponent extends Component {
       locationFetchCompolete: false,
       queryComplete: false,
       search: '',
+      eventDetail: null,
     };
   }
 
@@ -69,7 +83,6 @@ export default class MapComponent extends Component {
   async componentDidMount() {
     this.getCurrentLocation();
     const events = await API.graphql(graphqlOperation(listEvents));
-    // console.log('map', events.data.listEvents.items);
     this.setState({events: events.data.listEvents.items, queryComplete: true});
   }
   onRegionChange(region) {
@@ -87,50 +100,26 @@ export default class MapComponent extends Component {
     });
   }
 
-  handleGetDirections() {
-    const data = {
-      source: {
-        latitude: -33.8356372,
-        longitude: 18.6947617,
-      },
-      destination: {
-        latitude: -33.8600024,
-        longitude: 18.697459,
-      },
-      params: [
-        {
-          key: 'travelmode',
-          value: 'walking', // may be "driving", "bicycling" or "transit" as well
-        },
-        {
-          key: 'dir_action',
-          value: 'navigate', // this instantly initializes navigation using the given travel mode
-        },
-      ],
-      waypoints: [
-        {
-          latitude: -33.8600025,
-          longitude: 18.697452,
-        },
-        {
-          latitude: -33.8600026,
-          longitude: 18.697453,
-        },
-        {
-          latitude: -33.8600036,
-          longitude: 18.697493,
-        },
-      ],
-    };
-
-    getDirections(data);
-  }
-
-  handlerCommemt(event) {
-    this.props.navigation.navigate('Comments', {
-      eventId: event.eventId,
+  showDetail(event) {
+    if (this.state.eventDetail) {
+      this.setState({
+        eventDetail: null,
+      });
+    }
+    this.setState({
+      eventDetail: {...event},
     });
   }
+
+  hideDetail() {
+    this.setState({
+      eventDetail: null,
+    });
+  }
+
+  navigateToComment = eventId => {
+    this.props.navigation.navigate('Comments', {eventId: eventId});
+  };
 
   render() {
     const component =
@@ -140,34 +129,24 @@ export default class MapComponent extends Component {
             provider={PROVIDER_GOOGLE}
             initialRegion={this.state.initLocation}
             region={this.state.region}
-            onRegionChange={this.state.onRegionChange}
-            style={styles.map}>
+            onRegionChangeComplete={region => this.onRegionChange(region)}
+            style={styles.map}
+            onPress={() => this.hideDetail()}>
             {this.state.events.map(event => (
               <Marker
                 coordinate={{
                   latitude: event.latitude,
                   longitude: event.longitude,
                 }}
-                key={event.eventId}>
-                <Callout>
-                  <View>
-                    <LocationDetailComponent
-                      time={
-                        new Date(event.startTime).toLocaleTimeString() +
-                        ' - ' +
-                        new Date(event.endTime).toLocaleTimeString()
-                      }
-                      description={event.description}
-                      address={event.address}
-                      style={styles.detail}
-                      // handleGetDirections={this.handleGetDirections()}
-                      // handlerCommemt={this.handlerCommemt(event)}
-                    />
-                  </View>
-                </Callout>
-              </Marker>
+                key={event.eventId}
+                onPress={() => this.showDetail(event)}
+              />
             ))}
-            <Marker coordinate={this.state.initLocation} pinColor="blue" />
+            <Marker
+              coordinate={this.state.initLocation}
+              pinColor="blue"
+              onPress={() => this.hideDetail()}
+            />
           </MapView>
           <View style={styles.searchContainer}>
             <GooglePlacesAutocomplete
@@ -179,16 +158,17 @@ export default class MapComponent extends Component {
               fetchDetails={true}
               renderDescription={row => row.description} // custom description render
               onPress={(data, details) => {
-                console.log('hi');
                 this.setRegion(details);
               }}
               ref={c => (this.googlePlacesAutocomplete = c)}
               query={{
                 key: GOOGLE_API_KEY,
-                language: 'en', // language of the results
-                // types: '(cities)', // default: 'geocode'
+                language: 'en',
               }}
               styles={{
+                container: {
+                  backgroundColor: '#ffffffd3',
+                },
                 textInputContainer: {
                   width: '100%',
                 },
@@ -201,23 +181,49 @@ export default class MapComponent extends Component {
               }}
             />
             <TouchableOpacity
-              onPress={() => this.googlePlacesAutocomplete.setAddressText('')}>
+              onPress={() => this.googlePlacesAutocomplete.setAddressText('')}
+              style={styles.cancelSearch}>
               <Image
-                style={styles.btn}
+                style={styles.cancelSearchImage}
                 source={require('../../res/images/clear-search-24.png')}
               />
             </TouchableOpacity>
           </View>
-
-          <View style={styles.add}>
+          <View style={styles.addBtn}>
             <TouchableOpacity
               onPress={() => this.props.navigation.navigate(CreateEvents)}>
               <Image
-                // style={styles.add}
+                style={styles.addImage}
                 source={require('../../res/images/add-50.png')}
               />
             </TouchableOpacity>
           </View>
+          {this.state.eventDetail !== null && (
+            <Animatable.View
+              style={styles.detail}
+              animation="fadeInUp"
+              duration={500}>
+              <LocationDetailComponent
+                eventId={this.state.eventDetail.eventId}
+                time={
+                  new Date(
+                    this.state.eventDetail.startTime,
+                  ).toLocaleDateString() +
+                  '                 ' +
+                  new Date(this.state.eventDetail.startTime)
+                    .toLocaleTimeString()
+                    .substring(0, 5) +
+                  ' - ' +
+                  new Date(this.state.eventDetail.endTime)
+                    .toLocaleTimeString()
+                    .substring(0, 5)
+                }
+                description={this.state.eventDetail.description}
+                address={this.state.eventDetail.address}
+                navigateToComment={this.navigateToComment}
+              />
+            </Animatable.View>
+          )}
         </View>
       ) : (
         <View style={styles.loading}>
@@ -264,19 +270,42 @@ const styles = StyleSheet.create({
     width: 30,
     marginTop: 7,
   },
-  detail: {},
-  add: {
+  detail: {
+    width: '90%',
+    backgroundColor: '#dbd9cedf',
+    alignSelf: 'center',
+    position: 'absolute',
+    bottom: 60,
+    borderRadius: 11,
+  },
+  addBtn: {
+    right: 20,
+    position: 'absolute',
+    bottom: 60,
+  },
+  addImage: {
     height: 50,
     width: 50,
-    justifyContent: 'center',
-    alignSelf: 'flex-end',
-    right: 10,
-    position: 'absolute',
-    bottom: 90,
   },
   searchContainer: {
     flexDirection: 'row',
-    // height: 42,
     width: window.width,
+  },
+  cancelSearch: {
+    marginTop: 9,
+    right: 10,
+    position: 'absolute',
+  },
+  cancelSearchImage: {
+    width: 25,
+    height: 25,
+    opacity: 0.2,
+  },
+  logout: {
+    right: 10,
+  },
+  logoutImage: {
+    width: 40,
+    height: 40,
   },
 });

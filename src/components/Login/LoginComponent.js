@@ -15,6 +15,7 @@ import Hashes from 'jshashes';
 import lambda from '../../api';
 import {connect} from 'react-redux';
 import {storeUserId} from '../../redux/actions';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export async function requestLocationPermission() {
   try {
@@ -43,6 +44,11 @@ async function login(userId, password) {
   };
 
   const response = await lambda(request);
+  try {
+    AsyncStorage.setItem('@token', response.token);
+  } catch (e) {
+    console.error(e);
+  }
   return response;
 }
 
@@ -65,6 +71,13 @@ class LoginComponent extends Component {
     if (Platform.OS === 'android') {
       await requestLocationPermission();
     }
+
+    try {
+      const token = await AsyncStorage.getItem('@token');
+      this.checkToken(token);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   checkUserName = function(userId, password) {
@@ -83,6 +96,21 @@ class LoginComponent extends Component {
       } else {
         Alert.alert('Error', 'Invalid username or password');
       }
+    }
+  };
+
+  checkToken = async function(token) {
+    const request = {
+      operation: 'CHECKTOKEN',
+      params: {
+        token: token,
+      },
+    };
+
+    const response = await lambda(request);
+    if (response.success) {
+      this.props.storeUserId(response.userId);
+      this.props.navigation.replace('Maps');
     }
   };
 
@@ -126,7 +154,9 @@ class LoginComponent extends Component {
           </TouchableHighlight>
         </View>
 
-        <Text style={styles.footer}>APP by Team TRIANGLE</Text>
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>APP by Team TRIANGLE</Text>
+        </View>
       </View>
     );
   }
@@ -148,7 +178,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(LoginComponent);
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignSelf: 'center',
     height: '100%',
     width: '100%',
@@ -171,6 +200,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   btns: {
+    flex: 1,
     flexDirection: 'row',
     alignSelf: 'center',
   },
@@ -180,10 +210,10 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   footer: {
-    color: '#a6a6a699',
+    flex: 0.1,
     alignSelf: 'center',
-    position: 'absolute',
-    marginTop: 100,
-    bottom: 10,
+  },
+  footerText: {
+    color: '#a6a6a699',
   },
 });
