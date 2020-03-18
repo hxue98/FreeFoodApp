@@ -197,8 +197,8 @@ export default class CreateEvents extends Component {
             fetchDetails={true}
             renderDescription={row => row.description} // custom description render
             onPress={(data, details) => {
-              // console.log(data);
-              console.log('hi', data);
+              // console.log('detail', details);
+              // console.log('data', data);
               this.setLocation(details, data);
             }}
             ref={c => (this.googlePlacesAutocomplete = c)}
@@ -302,19 +302,19 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 18,
-    color: 'black'
+    color: 'black',
   },
   searchContainer: {
     flexDirection: 'row',
-    width: window.width
+    width: window.width,
   },
   cancelSearch: {
     marginTop: 9,
     right: 10,
-    position: 'absolute'
+    position: 'absolute',
   },
   cancelSearchImage: {
     width: 25,
-    height: 25
-  }
+    height: 25,
+  },
 });

@@ -203,11 +203,13 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignSelf: 'center',
+    borderRadius: 20,
   },
   btn: {
     width: '35%',
     marginLeft: 5,
     marginRight: 5,
+    borderRadius: 35,
   },
   footer: {
     flex: 0.1,
