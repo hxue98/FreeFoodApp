@@ -195,7 +195,7 @@ export default class MapComponent extends Component {
           </View>
           <View style={styles.addBtn}>
             <TouchableOpacity
-              onPress={() => this.props.navigation.navigate(CreateEvents)}>
+              onPress={() => this.props.navigation.navigate('CreateEvents', {currentLocation: this.state.initLocation})}>
               <Image
                 style={styles.addImage}
                 source={require('../../res/images/add-50.png')}

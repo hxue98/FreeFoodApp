@@ -8,8 +8,6 @@ import {
   Alert,
   Text,
   TouchableOpacity,
-  ScrollView,
-  ActivityIndicator,
 } from 'react-native';
 import API, {graphqlOperation} from '@aws-amplify/api';
 import {createEvent} from '../../graphql/mutations';
@@ -18,7 +16,6 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import store from '../../redux/store';
 import {GOOGLE_API_KEY} from '../../../config';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
-import Geolocation from 'react-native-geolocation-service';
 
 async function createNewEvents(
   posterId,
@@ -48,7 +45,6 @@ async function createNewEvents(
 export default class CreateEvents extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       eventText: '',
       latitude: 0,
@@ -67,7 +63,7 @@ export default class CreateEvents extends Component {
     this.setState({
       latitude: details.geometry.location.lat,
       longitude: details.geometry.location.lng,
-      address: data.description,
+      address: data.description === 'Current location' ? this.state.currentAddress : data.description,
     });
   }
 
@@ -77,19 +73,19 @@ export default class CreateEvents extends Component {
       chosenStartDate: moment(datetime).format('MMMM, Do YYYY HH:mm'),
       startTime: datetime.getTime(),
     });
-  };
+  }
 
   showStartPicker = () => {
     this.setState({
       isVisible: true,
     });
-  };
+  }
 
   hideStartPicker = () => {
     this.setState({
       isVisible: false,
     });
-  };
+  }
 
   endPicker = datetime => {
     this.setState({
@@ -97,41 +93,28 @@ export default class CreateEvents extends Component {
       chosenEndDate: moment(datetime).format('MMMM, Do YYYY HH:mm'),
       endTime: datetime.getTime(),
     });
-  };
+  }
 
   showEndPicker = () => {
     this.setState({
       isEndVisible: true,
     });
-  };
+  }
 
   hideEndPicker = () => {
     this.setState({
       isEndVisible: false,
     });
-  };
+  }
 
-  getCurrentLocation() {
-    Geolocation.getCurrentPosition(
-      position => {
-        const region = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          latitudeDelta: 0.00822 * 2.5,
-          longitudeDelta: 0.00401 * 2.5,
-          key: 123456,
-        };
-
-        this.setState({
-          latitude: region.latitude,
-          longitude: region.longitude,
-        });
-      },
-      error => {
-        console.error(error.code, error.message);
-      },
-      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-    );
+  getCurrentAddress = async () => {
+    const url = "https://maps.googleapis.com/maps/api/geocode/json?key=" + GOOGLE_API_KEY +
+        "&latlng=" + this.props.route.params.currentLocation.latitude + "," + this.props.route.params.currentLocation.longitude + "&sensor=true";
+    const response = await fetch(url);
+    const address = await response.json();
+    this.setState({
+        currentAddress: address.results[0].formatted_address
+    });
   }
 
   checkInput(startTime, endTime, description) {
@@ -174,14 +157,14 @@ export default class CreateEvents extends Component {
   }
 
   async componentDidMount() {
-    this.getCurrentLocation();
+    await this.getCurrentAddress();
   }
 
   render() {
     const currentLocation = {
       description: 'Current location',
       geometry: {
-        location: {lat: this.state.latitude, lng: this.state.longitude},
+        location: {lat: this.props.route.params.currentLocation.latitude, lng: this.props.route.params.currentLocation.longitude},
       },
     };
     return (
