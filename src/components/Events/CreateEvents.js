@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {
   TextInput,
   Image,
-  Dimensions,
   StyleSheet,
   View,
   Button,
@@ -165,7 +164,7 @@ export default class CreateEvents extends Component {
         this.state.latitude,
         this.state.longitude,
         this.state.address,
-      ).catch(err => console.log(err));
+      ).catch(err => console.error(err));
       if (res) {
         this.props.navigation.replace('Maps');
       } else {
@@ -197,8 +196,6 @@ export default class CreateEvents extends Component {
             fetchDetails={true}
             renderDescription={row => row.description} // custom description render
             onPress={(data, details) => {
-              // console.log(data);
-              console.log('hi', data);
               this.setLocation(details, data);
             }}
             ref={c => (this.googlePlacesAutocomplete = c)}
@@ -288,8 +285,7 @@ export default class CreateEvents extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // alignSelf: 'center',
-    // justifyContent: 'center',
+    height: '100%',
     width: '100%',
   },
   description: {
@@ -311,10 +307,12 @@ const styles = StyleSheet.create({
   cancelSearch: {
     marginTop: 9,
     right: 10,
-    position: 'absolute'
+    position: 'absolute',
+    backgroundColor: 'white'
   },
   cancelSearchImage: {
     width: 25,
-    height: 25
+    height: 25,
+    opacity: .2
   }
 });

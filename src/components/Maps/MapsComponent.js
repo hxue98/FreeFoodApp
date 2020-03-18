@@ -11,7 +11,7 @@ import {
 import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 import API, {graphqlOperation} from '@aws-amplify/api';
-import {listEvents} from '../../graphql/queries';
+import lambda from '../../api';
 import CreateEvents from '../Events/CreateEvents';
 import LocationDetailComponent from '../LocationDetail/LocationDetailComponent';
 import {GOOGLE_API_KEY} from '../../../config';
@@ -82,8 +82,12 @@ export default class MapComponent extends Component {
 
   async componentDidMount() {
     this.getCurrentLocation();
-    const events = await API.graphql(graphqlOperation(listEvents));
-    this.setState({events: events.data.listEvents.items, queryComplete: true});
+
+    const request = {
+        operation: 'GETEVENTS'
+    };
+    const response = await lambda(request);
+    this.setState({events: response.events, queryComplete: true});
   }
   onRegionChange(region) {
     this.setState({region});
@@ -295,6 +299,7 @@ const styles = StyleSheet.create({
     marginTop: 9,
     right: 10,
     position: 'absolute',
+    backgroundColor: 'white'
   },
   cancelSearchImage: {
     width: 25,
