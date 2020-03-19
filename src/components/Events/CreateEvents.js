@@ -16,6 +16,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import store from '../../redux/store';
 import {GOOGLE_API_KEY} from '../../../config';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import Geolocation from 'react-native-geolocation-service';
 
 async function createNewEvents(
   posterId,
@@ -56,6 +57,7 @@ export default class CreateEvents extends Component {
       chosenStartDate: '',
       chosenEndDate: '',
       address: '',
+      currentLocation: null,
     };
   }
 
@@ -110,21 +112,40 @@ export default class CreateEvents extends Component {
     });
   };
 
-  getCurrentAddress = async () => {
-    const url =
-      'https://maps.googleapis.com/maps/api/geocode/json?key=' +
-      GOOGLE_API_KEY +
-      '&latlng=' +
-      this.props.route.params.currentLocation.latitude +
-      ',' +
-      this.props.route.params.currentLocation.longitude +
-      '&sensor=true';
-    const response = await fetch(url);
-    const address = await response.json();
-    this.setState({
-      currentAddress: address.results[0].formatted_address,
-    });
-  };
+  async getCurrentLocation() {
+    Geolocation.getCurrentPosition(
+      async position => {
+        const url =
+          'https://maps.googleapis.com/maps/api/geocode/json?key=' +
+          GOOGLE_API_KEY +
+          '&latlng=' +
+          position.coords.latitude +
+          ',' +
+          position.coords.longitude +
+          '&sensor=true';
+        const response = await fetch(url);
+        const address = await response.json();
+        this.setState({
+          currentAddress: address.results[0].formatted_address,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          currentLocation: {
+            description: 'Current location',
+            geometry: {
+              location: {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+              },
+            },
+          },
+        });
+      },
+      error => {
+        console.error(error.code, error.message);
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
+  }
 
   checkInput(address, startTime, endTime, description) {
     if (address === '') {
@@ -162,7 +183,7 @@ export default class CreateEvents extends Component {
         this.state.address,
       ).catch(err => console.error(err));
       if (res) {
-        this.props.navigation.replace('maps');
+        this.props.navigation.replace('Maps');
       } else {
         Alert.alert('Error', 'Invalid Start time or End time or Description');
       }
@@ -170,19 +191,10 @@ export default class CreateEvents extends Component {
   }
 
   async componentDidMount() {
-    await this.getCurrentAddress();
+    await this.getCurrentLocation();
   }
 
   render() {
-    const currentLocation = {
-      description: 'Current location',
-      geometry: {
-        location: {
-          lat: this.props.route.params.currentLocation.latitude,
-          lng: this.props.route.params.currentLocation.longitude,
-        },
-      },
-    };
     return (
       <View style={styles.container}>
         <View style={styles.searchContainer}>
@@ -213,7 +225,7 @@ export default class CreateEvents extends Component {
                 color: '#1faadb',
               },
             }}
-            predefinedPlaces={[currentLocation]}
+            predefinedPlaces={[this.state.currentLocation]}
             predefinedPlacesAlwaysVisible={true}
           />
           <TouchableOpacity

@@ -1,16 +1,6 @@
 import React, {Component} from 'react';
-import {
-  TextInput,
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  Alert,
-  TouchableHighlight,
-} from 'react-native';
+import {Image, View} from 'react-native';
 
-import Hashes from 'jshashes';
 import lambda from '../../api';
 import {connect} from 'react-redux';
 import {storeUserId} from '../../redux/actions';
