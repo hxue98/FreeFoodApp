@@ -38,7 +38,6 @@ async function createNewEvents(
     upvote: 0,
     downvote: 0,
   };
-  console.log(event);
   await API.graphql(graphqlOperation(createEvent, {input: event}));
   return true;
 }
@@ -122,8 +121,7 @@ export default class CreateEvents extends Component {
     if (address === '') {
       Alert.alert('Error', 'Address cannot be empty');
       return false;
-    }
-    if (startTime === '') {
+    } else if (startTime === '') {
       Alert.alert('Error', 'Start Time cannot be empty');
       return false;
     } else if (endTime === '') {
@@ -296,7 +294,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginHorizontal: '3%',
     backgroundColor: '#139af2',
-    width: '45%',
+    width: '44%',
     paddingLeft: 3
   },
   btn: {

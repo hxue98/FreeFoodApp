@@ -279,13 +279,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#dbd9cedf',
     alignSelf: 'center',
     position: 'absolute',
-    bottom: 60,
+    bottom: '15%',
     borderRadius: 11,
   },
   addBtn: {
-    right: 20,
+    right: 25,
     position: 'absolute',
-    bottom: 60,
+    bottom: '15%',
   },
   addImage: {
     height: 50,
