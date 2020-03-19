@@ -9,8 +9,9 @@ import {
   ActivityIndicator,
   Platform,
 } from 'react-native';
-import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
+import MapView, {PROVIDER_GOOGLE, Marker, Callout} from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
+// import Geolocation from '@react-native-community/geolocation';
 import API, {graphqlOperation} from '@aws-amplify/api';
 import lambda from '../../api';
 import CreateEvents from '../Events/CreateEvents';
@@ -84,6 +85,7 @@ export default class MapComponent extends Component {
   requestLocationPermission = async () => {
     if (Platform.OS === 'ios') {
       var response = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+
       console.log('iPhone: ' + response);
 
       if (response === 'granted') {
@@ -108,7 +110,7 @@ export default class MapComponent extends Component {
     this.setState({events: response.events, queryComplete: true});
   }
   onRegionChange(region) {
-    this.setState({region});
+    this.setState({region: region});
   }
   setRegion(details) {
     this.setState({
@@ -129,7 +131,7 @@ export default class MapComponent extends Component {
       });
     }
     this.setState({
-      eventDetail: {...event},
+      eventDetail: {event},
     });
   }
 
@@ -148,22 +150,56 @@ export default class MapComponent extends Component {
       this.state.locationFetchCompolete && this.state.queryComplete ? (
         <View style={styles.container}>
           <MapView
-            // provider={PROVIDER_GOOGLE}
+            provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : null}
             initialRegion={this.state.initLocation}
             region={this.state.region}
-            onRegionChangeComplete={region => this.onRegionChange(region)}
             style={styles.map}
             onPress={() => this.hideDetail()}>
-            {this.state.events.map(event => (
-              <Marker
-                coordinate={{
-                  latitude: event.latitude,
-                  longitude: event.longitude,
-                }}
-                key={event.eventId}
-                onPress={() => this.showDetail(event)}
-              />
-            ))}
+            {Platform.OS === 'ios'
+              ? this.state.events.map(event => (
+                  <Marker
+                    coordinate={{
+                      latitude: event.latitude,
+                      longitude: event.longitude,
+                    }}>
+                    <Callout
+                      onPress={() =>
+                        this.props.navigation.navigate('Comments', {
+                          eventId: event.eventId,
+                        })
+                      }>
+                      <View>
+                        <LocationDetailComponent
+                          eventId={event.eventId}
+                          time={
+                            new Date(event.startTime).toLocaleDateString() +
+                            '                 ' +
+                            new Date(event.startTime)
+                              .toLocaleTimeString()
+                              .substring(0, 5) +
+                            ' - ' +
+                            new Date(event.endTime)
+                              .toLocaleTimeString()
+                              .substring(0, 5)
+                          }
+                          description={event.description}
+                          address={event.address}
+                          navigateToComment={this.navigateToComment}
+                        />
+                      </View>
+                    </Callout>
+                  </Marker>
+                ))
+              : this.state.events.map(event => (
+                  <Marker
+                    coordinate={{
+                      latitude: event.latitude,
+                      longitude: event.longitude,
+                    }}
+                    key={event.eventId}
+                    onPress={() => this.showDetail(event)}
+                  />
+                ))}
             <Marker
               coordinate={this.state.initLocation}
               pinColor="blue"
@@ -213,7 +249,11 @@ export default class MapComponent extends Component {
           </View>
           <View style={styles.addBtn}>
             <TouchableOpacity
-              onPress={() => this.props.navigation.navigate(CreateEvents)}>
+              onPress={() =>
+                this.props.navigation.navigate('CreateEvents', {
+                  currentLocation: this.state.initLocation,
+                })
+              }>
               <Image
                 style={styles.addImage}
                 source={require('../../res/images/add-50.png')}
@@ -297,7 +337,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#dbd9cedf',
     alignSelf: 'center',
     position: 'absolute',
-    bottom: 60,
+    bottom: 160,
     borderRadius: 11,
   },
   addBtn: {

@@ -8,8 +8,6 @@ import {
   Alert,
   Text,
   TouchableOpacity,
-  ScrollView,
-  ActivityIndicator,
 } from 'react-native';
 import API, {graphqlOperation} from '@aws-amplify/api';
 import {createEvent} from '../../graphql/mutations';
@@ -18,7 +16,6 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import store from '../../redux/store';
 import {GOOGLE_API_KEY} from '../../../config';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
-import Geolocation from 'react-native-geolocation-service';
 
 async function createNewEvents(
   posterId,
@@ -41,6 +38,7 @@ async function createNewEvents(
     upvote: 0,
     downvote: 0,
   };
+  console.log(event);
   await API.graphql(graphqlOperation(createEvent, {input: event}));
   return true;
 }
@@ -48,7 +46,6 @@ async function createNewEvents(
 export default class CreateEvents extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       eventText: '',
       latitude: 0,
@@ -67,14 +64,17 @@ export default class CreateEvents extends Component {
     this.setState({
       latitude: details.geometry.location.lat,
       longitude: details.geometry.location.lng,
-      address: data.description,
+      address:
+        data.description === 'Current location'
+          ? this.state.currentAddress
+          : data.description,
     });
   }
 
   startPicker = datetime => {
     this.setState({
       isVisible: false,
-      chosenStartDate: moment(datetime).format('MMMM, Do YYYY HH:mm'),
+      chosenStartDate: moment(datetime).format('MM/DD HH:mm'),
       startTime: datetime.getTime(),
     });
   };
@@ -94,7 +94,7 @@ export default class CreateEvents extends Component {
   endPicker = datetime => {
     this.setState({
       isEndVisible: false,
-      chosenEndDate: moment(datetime).format('MMMM, Do YYYY HH:mm'),
+      chosenEndDate: moment(datetime).format('MM/DD HH:mm'),
       endTime: datetime.getTime(),
     });
   };
@@ -111,30 +111,27 @@ export default class CreateEvents extends Component {
     });
   };
 
-  getCurrentLocation() {
-    Geolocation.getCurrentPosition(
-      position => {
-        const region = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          latitudeDelta: 0.00822 * 2.5,
-          longitudeDelta: 0.00401 * 2.5,
-          key: 123456,
-        };
+  getCurrentAddress = async () => {
+    const url =
+      'https://maps.googleapis.com/maps/api/geocode/json?key=' +
+      GOOGLE_API_KEY +
+      '&latlng=' +
+      this.props.route.params.currentLocation.latitude +
+      ',' +
+      this.props.route.params.currentLocation.longitude +
+      '&sensor=true';
+    const response = await fetch(url);
+    const address = await response.json();
+    this.setState({
+      currentAddress: address.results[0].formatted_address,
+    });
+  };
 
-        this.setState({
-          latitude: region.latitude,
-          longitude: region.longitude,
-        });
-      },
-      error => {
-        console.error(error.code, error.message);
-      },
-      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-    );
-  }
-
-  checkInput(startTime, endTime, description) {
+  checkInput(address, startTime, endTime, description) {
+    if (address === '') {
+      Alert.alert('Error', 'Address cannot be empty');
+      return false;
+    }
     if (startTime === '') {
       Alert.alert('Error', 'Start Time cannot be empty');
       return false;
@@ -151,6 +148,7 @@ export default class CreateEvents extends Component {
   async confirmed() {
     if (
       this.checkInput(
+        this.state.address,
         this.state.chosenStartDate,
         this.state.chosenEndDate,
         this.state.eventText,
@@ -166,7 +164,7 @@ export default class CreateEvents extends Component {
         this.state.address,
       ).catch(err => console.error(err));
       if (res) {
-        this.props.navigation.replace('Maps');
+        this.props.navigation.replace('maps');
       } else {
         Alert.alert('Error', 'Invalid Start time or End time or Description');
       }
@@ -174,14 +172,17 @@ export default class CreateEvents extends Component {
   }
 
   async componentDidMount() {
-    this.getCurrentLocation();
+    await this.getCurrentAddress();
   }
 
   render() {
     const currentLocation = {
       description: 'Current location',
       geometry: {
-        location: {lat: this.state.latitude, lng: this.state.longitude},
+        location: {
+          lat: this.props.route.params.currentLocation.latitude,
+          lng: this.props.route.params.currentLocation.longitude,
+        },
       },
     };
     return (
@@ -189,20 +190,19 @@ export default class CreateEvents extends Component {
         <View style={styles.searchContainer}>
           <GooglePlacesAutocomplete
             placeholder="Search Location"
-            minLength={2} // minimum length of text to search
+            minLength={3}
             autoFocus={false}
             returnKeyType={'search'}
-            listViewDisplayed="true" // true/false/undefined
+            listViewDisplayed="true"
             fetchDetails={true}
-            renderDescription={row => row.description} // custom description render
+            renderDescription={row => row.description}
             onPress={(data, details) => {
               this.setLocation(details, data);
             }}
             ref={c => (this.googlePlacesAutocomplete = c)}
             query={{
               key: GOOGLE_API_KEY,
-              language: 'en', // language of the results
-              // types: '(cities)', // default: 'geocode'
+              language: 'en',
             }}
             styles={{
               textInputContainer: {
@@ -215,8 +215,6 @@ export default class CreateEvents extends Component {
                 color: '#1faadb',
               },
             }}
-            // currentLocation // Will add a 'Current location' button at the top of the predefined places list
-            // currentLocationLabel="Current location"
             predefinedPlaces={[currentLocation]}
             predefinedPlacesAlwaysVisible={true}
           />
@@ -230,9 +228,9 @@ export default class CreateEvents extends Component {
           </TouchableOpacity>
         </View>
 
-        <View>
+        <View style={{flexDirection: 'row'}}>
           <TouchableOpacity
-            style={{borderWidth: 1, marginTop: 15}}
+            style={styles.datePicker}
             onPress={this.showStartPicker}>
             <DateTimePickerModal
               isVisible={this.state.isVisible}
@@ -246,7 +244,7 @@ export default class CreateEvents extends Component {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={{borderWidth: 1, marginTop: 15}}
+            style={styles.datePicker}
             onPress={this.showEndPicker}>
             <DateTimePickerModal
               isVisible={this.state.isEndVisible}
@@ -259,24 +257,25 @@ export default class CreateEvents extends Component {
               {'End Time: ' + this.state.chosenEndDate}
             </Text>
           </TouchableOpacity>
-          <TextInput
-            style={styles.description}
-            placeholder="Description"
-            multiline={true}
-            textAlignVertical={'top'}
-            underlineColorAndroid={'transparent'}
-            onChangeText={text => this.setState({eventText: text})}
-            value={this.state.eventText}
-          />
+        </View>
+        <TextInput
+          style={styles.description}
+          placeholder="Description"
+          multiline={true}
+          textAlignVertical={'top'}
+          underlineColorAndroid={'transparent'}
+          onChangeText={text => this.setState({eventText: text})}
+          value={this.state.eventText}
+        />
 
+        <TouchableOpacity style={styles.btn}>
           <Button
-            style={{fontSize: 18, marginTop: 35}}
             onPress={() => {
               this.confirmed();
             }}
             title="Confirm"
           />
-        </View>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -284,21 +283,34 @@ export default class CreateEvents extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     height: '100%',
     width: '100%',
   },
   description: {
-    height: 100,
-    width: '100%',
-    borderWidth: 3,
-    borderColor: '#a6a6a6',
+    height: 200,
+    width: '95%',
+    borderWidth: 1,
+    borderColor: '#5e9cff',
     fontSize: 18,
-    marginTop: 15,
+    marginTop: 30,
+    alignSelf: 'center',
   },
   text: {
-    fontSize: 18,
-    color: 'black',
+    fontSize: 15,
+    color: 'white',
+  },
+  datePicker: {
+    height: 25,
+    marginTop: 30,
+    marginHorizontal: '3%',
+    backgroundColor: '#139af2',
+    width: '45%',
+    paddingLeft: 3,
+  },
+  btn: {
+    width: 100,
+    alignSelf: 'center',
+    marginTop: 30,
   },
   searchContainer: {
     flexDirection: 'row',
