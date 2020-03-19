@@ -13,6 +13,7 @@ import CommentComponent from './src/components/Comment/CommentComponent';
 import LocationDetailComponent from './src/components/LocationDetail/LocationDetailComponent';
 import MapsComponent from './src/components/Maps/MapsComponent';
 import RegisterComponent from './src/components/Login/RegisterComponent';
+import LoadingComponent from './src/components/Loading/LoadingComponent';
 import LoginComponent from './src/components/Login/LoginComponent';
 import CreateEvents from './src/components/Events/CreateEvents';
 import store from './src/redux/store';
@@ -26,8 +27,12 @@ export default function App() {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator navigationOptions={{headerShown: false}}>
-          {/* <Stack.Screen name="Loading" component={Loading} /> */}
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Loading"
+            component={LoadingComponent}
+            options={{headerShown: false}}
+          />
           <Stack.Screen name="Login" component={LoginComponent} />
           <Stack.Screen name="Register" component={RegisterComponent} />
           <Stack.Screen

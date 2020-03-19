@@ -42,22 +42,6 @@ class LoginComponent extends Component {
     };
   }
 
-  showLogo() {
-    <Image
-      style={{width: 430, height: 450}}
-      source={require('../../res/images/team-logo.png')}
-    />;
-  }
-
-  async componentDidMount() {
-    try {
-      const token = await AsyncStorage.getItem('@token');
-      this.checkToken(token);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
   checkUserName = function(userId, password) {
     if (userId === '' || password === '') {
       Alert.alert('Error', 'Fields cannot be empty');
@@ -74,21 +58,6 @@ class LoginComponent extends Component {
       } else {
         Alert.alert('Error', 'Invalid username or password');
       }
-    }
-  };
-
-  checkToken = async function(token) {
-    const request = {
-      operation: 'CHECKTOKEN',
-      params: {
-        token: token,
-      },
-    };
-
-    const response = await lambda(request);
-    if (response.success) {
-      this.props.storeUserId(response.userId);
-      this.props.navigation.replace('Maps');
     }
   };
 
