@@ -7,17 +7,19 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 import API, {graphqlOperation} from '@aws-amplify/api';
-import {listEvents} from '../../graphql/queries';
+import lambda from '../../api';
 import CreateEvents from '../Events/CreateEvents';
 import LocationDetailComponent from '../LocationDetail/LocationDetailComponent';
 import {GOOGLE_API_KEY} from '../../../config';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import * as Animatable from 'react-native-animatable';
 import AsyncStorage from '@react-native-community/async-storage';
+import {request, PERMISSIONS} from 'react-native-permissions';
 
 export default class MapComponent extends Component {
   constructor(props) {
@@ -79,11 +81,31 @@ export default class MapComponent extends Component {
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
   }
+  requestLocationPermission = async () => {
+    if (Platform.OS === 'ios') {
+      var response = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+      console.log('iPhone: ' + response);
+
+      if (response === 'granted') {
+        this.getCurrentLocation();
+      }
+    } else {
+      var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+      console.log('Android: ' + response);
+      if (response === 'granted') {
+        this.getCurrentLocation();
+      }
+    }
+  };
 
   async componentDidMount() {
-    this.getCurrentLocation();
-    const events = await API.graphql(graphqlOperation(listEvents));
-    this.setState({events: events.data.listEvents.items, queryComplete: true});
+    this.requestLocationPermission();
+
+    const request = {
+      operation: 'GETEVENTS',
+    };
+    const response = await lambda(request);
+    this.setState({events: response.events, queryComplete: true});
   }
   onRegionChange(region) {
     this.setState({region});
@@ -126,7 +148,7 @@ export default class MapComponent extends Component {
       this.state.locationFetchCompolete && this.state.queryComplete ? (
         <View style={styles.container}>
           <MapView
-            provider={PROVIDER_GOOGLE}
+            // provider={PROVIDER_GOOGLE}
             initialRegion={this.state.initLocation}
             region={this.state.region}
             onRegionChangeComplete={region => this.onRegionChange(region)}
@@ -295,6 +317,7 @@ const styles = StyleSheet.create({
     marginTop: 9,
     right: 10,
     position: 'absolute',
+    backgroundColor: 'white',
   },
   cancelSearchImage: {
     width: 25,

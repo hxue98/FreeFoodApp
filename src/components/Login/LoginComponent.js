@@ -7,32 +7,14 @@ import {
   View,
   Button,
   Alert,
-  PermissionsAndroid,
   TouchableHighlight,
-  Platform,
 } from 'react-native';
+
 import Hashes from 'jshashes';
 import lambda from '../../api';
 import {connect} from 'react-redux';
 import {storeUserId} from '../../redux/actions';
 import AsyncStorage from '@react-native-community/async-storage';
-
-export async function requestLocationPermission() {
-  try {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      {
-        title: 'FreeFood App',
-        message: 'FreeFood App access to your location ',
-      },
-    );
-    if (!granted === PermissionsAndroid.RESULTS.GRANTED) {
-      alert('Location permission denied');
-    }
-  } catch (err) {
-    console.warn(err);
-  }
-}
 
 async function login(userId, password) {
   const request = {
@@ -68,10 +50,6 @@ class LoginComponent extends Component {
   }
 
   async componentDidMount() {
-    if (Platform.OS === 'android') {
-      await requestLocationPermission();
-    }
-
     try {
       const token = await AsyncStorage.getItem('@token');
       this.checkToken(token);

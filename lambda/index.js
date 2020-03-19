@@ -1,16 +1,24 @@
+/* IMPORT */
 const AWS = require(`aws-sdk`);
 const Hashes = require('jshashes');
 const JWT = require('jsonwebtoken');
 const FS = require('fs');
 
+/* SESSION KEY */
 const privateKey = FS.readFileSync(__dirname + '\/private.key');
-const expiresIn = '7d';
+const keyExpiresIn = '7d';
 
+/* EVENT EXPIRATION */
+const eventExpiresIn = 3 * 60 * 60 * 1000;
+
+/* DB TABLE */
+const ACCOUNT_TABLE_NAME = 'Account';
+const COMMENT_TABLE_NAME = 'Comment';
+const EVENT_TABLE_NAME = 'Event';
+
+/* DB CONNECTION */
 AWS.config.update({region: `us-east-1`});
 const db = new AWS.DynamoDB.DocumentClient();
-
-const ACCOUNT_TABLE_NAME = 'Account';
-const COMMENT_TABLE_NAME = "Comment";
 
 exports.handler = async function(event, context) {
     //for debug use
@@ -22,7 +30,7 @@ exports.handler = async function(event, context) {
     switch(data.operation) {
 
         case 'REGISTER': {
-            console.log("register-event");
+            console.log('register');
             let Item = {
                 userId: data.params.userId,
                 password: data.params.password
@@ -50,7 +58,7 @@ exports.handler = async function(event, context) {
         }
 
         case 'LOGIN': {
-            console.log("login-event");
+            console.log('login');
             let Item = {
                 userId: data.params.userId,
                 password: data.params.password
@@ -66,14 +74,14 @@ exports.handler = async function(event, context) {
             }
 
             if (user.password === Item.password) {
-                const token = JWT.sign({userId: user.userId}, privateKey, {expiresIn: expiresIn});
+                const token = JWT.sign({userId: user.userId}, privateKey, {expiresIn: keyExpiresIn});
                 return sendResponse({token: token}, true);
             }
             return sendResponse(null, false);
         }
 
         case 'CHECKTOKEN': {
-            console.log("check-token");
+            console.log('check-token');
             const decoded = JWT.verify(data.params.token, privateKey);
             if (decoded) {
                 return sendResponse({userId: decoded.userId}, true);
@@ -82,13 +90,19 @@ exports.handler = async function(event, context) {
         }
 
         case 'GETCOMMENTS': {
-            console.log("get-comments-event");
+            console.log('get-comments');
             let comments = await getComments(data.params.eventId);
             return sendResponse({comments: comments}, true);
         }
 
+        case 'GETEVENTS': {
+            console.log('get-events');
+            let events = await getEvents();
+            return sendResponse({events: events}, true);
+        }
+
         default: {
-            console.log("missing operation");
+            console.log('missing operation');
             return sendResponse(null, false);
         }
     }
@@ -134,6 +148,20 @@ async function getComments(eventId) {
         comments = data.Items;
     }).promise();
     return comments.filter(comment => comment.eventId === eventId);
+}
+
+async function getEvents() {
+    const query = {
+        TableName: EVENT_TABLE_NAME
+    };
+    var events;
+    await db.scan(query, function(err, data) {
+        if (err) {
+            console.log(`error`, err);
+        }
+        events = data.Items;
+    }).promise();
+    return events.filter(event => event.endTime + eventExpiresIn > Date.now());
 }
 
 function sendResponse(body, success) {
