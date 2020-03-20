@@ -16,12 +16,12 @@ export default class CommentComponent extends Component {
     };
   }
 
-  getComments = async (eventId) => {
+  getComments = async eventId => {
     const request = {
-        operation: 'GETCOMMENTS',
-        params: {
-            eventId: eventId
-        },
+      operation: 'GETCOMMENTS',
+      params: {
+        eventId: eventId,
+      },
     };
 
     const response = await lambda(request);

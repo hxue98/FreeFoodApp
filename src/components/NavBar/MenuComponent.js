@@ -22,7 +22,9 @@ export default class MenuComponent extends Component {
             source={require('../../res/images/add-50.png')}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.textBtn}>
+        <TouchableOpacity
+          style={styles.textBtn}
+          onPress={() => this.props.navigateToMyAccount()}>
           <Text style={styles.text}>My Account</Text>
         </TouchableOpacity>
       </View>

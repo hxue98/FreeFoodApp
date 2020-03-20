@@ -147,6 +147,10 @@ export default class MapComponent extends Component {
     this.props.navigation.navigate('Comments', {eventId: eventId});
   };
 
+  navigateToMyAccount = () => {
+    this.props.navigation.navigate('MyAccount');
+  };
+
   render() {
     const component =
       this.state.locationFetchCompolete && this.state.queryComplete ? (
@@ -282,6 +286,7 @@ export default class MapComponent extends Component {
             <MenuComponent
               navigate={this.props.navigation.navigate}
               refreshMap={this.refresh}
+              navigateToMyAccount={this.navigateToMyAccount}
             />
           </View>
         </View>

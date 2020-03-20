@@ -7,8 +7,6 @@ import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {Provider} from 'react-redux';
-import AsyncStorage from '@react-native-community/async-storage';
-
 import CommentComponent from './src/components/Comment/CommentComponent';
 import LocationDetailComponent from './src/components/LocationDetail/LocationDetailComponent';
 import MapsComponent from './src/components/Maps/MapsComponent';
@@ -16,6 +14,10 @@ import RegisterComponent from './src/components/Login/RegisterComponent';
 import LoadingComponent from './src/components/Loading/LoadingComponent';
 import LoginComponent from './src/components/Login/LoginComponent';
 import CreateEvents from './src/components/Events/CreateEvents';
+import MyAccount from './src/components/MyAccount/MyAccountComponent';
+import MyEvents from './src/components/Events/MyEvents';
+import EventDetail from './src/components/Events/EventDetailComponents';
+import Settings from './src/components/MyAccount/Settings';
 import store from './src/redux/store';
 API.configure(config);
 PubSub.configure(config);
@@ -43,6 +45,14 @@ export default function App() {
           <Stack.Screen name="Detail" component={LocationDetailComponent} />
           <Stack.Screen name="Comments" component={CommentComponent} />
           <Stack.Screen name="CreateEvents" component={CreateEvents} />
+          <Stack.Screen
+            name="MyAccount"
+            component={MyAccount}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen name="MyEvents" component={MyEvents} />
+          <Stack.Screen name="EventDetail" component={EventDetail} />
+          <Stack.Screen name="Settings" component={Settings} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
