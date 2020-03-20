@@ -47,7 +47,6 @@ export default class CommentComponent extends Component {
       <View>
         <FlatList
           data={this.state.data.sort((a, b) => b.date - a.date)}
-          //TODO replace userId with username
           renderItem={({item}) => (
             <View>
               <CommentLineComponent

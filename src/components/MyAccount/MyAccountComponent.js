@@ -96,7 +96,8 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     marginTop: 20,
-    marginLeft: 230,
+    right: 25,
+    position: 'absolute',
   },
   divider: {
     height: 2,

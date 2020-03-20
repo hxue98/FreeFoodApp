@@ -48,7 +48,6 @@ export default function App() {
           <Stack.Screen
             name="MyAccount"
             component={MyAccount}
-            options={{headerShown: false}}
           />
           <Stack.Screen name="MyEvents" component={MyEvents} />
           <Stack.Screen name="EventDetail" component={EventDetail} />

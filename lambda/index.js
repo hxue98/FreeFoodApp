@@ -101,6 +101,18 @@ exports.handler = async function(event, context) {
             return sendResponse({events: events}, true);
         }
 
+        case 'GETUSEREVENTS': {
+            console.log('get-user-events');
+            let events = await getUserEvents(data.params.userId);
+            return sendResponse({events: events}, true);
+        }
+
+        case 'DELETEEVENT': {
+            console.log('delete-event');
+            await deleteEvent(data.params.eventId);
+            return sendResponse(null, true);
+        }
+
         default: {
             console.log('missing operation');
             return sendResponse(null, false);
@@ -162,6 +174,35 @@ async function getEvents() {
         events = data.Items;
     }).promise();
     return events.filter(event => event.endTime + eventExpiresIn > Date.now());
+}
+
+async function getUserEvents(userId) {
+    const query = {
+        TableName: EVENT_TABLE_NAME
+    };
+    var events;
+    await db.scan(query, function(err, data) {
+        if (err) {
+            console.log(`error`, err);
+        }
+        events = data.Items;
+    }).promise();
+    return events.filter(event => event.posterId === userId);
+}
+
+async function deleteEvent(eventId) {
+    var params = {
+      TableName : 'Event',
+      Key: {
+        eventId: eventId
+      }
+    };
+
+    await db.delete(params, function(err, data) {
+        if (err) {
+            console.log(`error`, err);
+        }
+    }).promise();
 }
 
 function sendResponse(body, success) {

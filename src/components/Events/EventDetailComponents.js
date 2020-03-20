@@ -18,7 +18,7 @@ export default class EventDetailComponents extends Component {
     };
   }
 
-  deleteEvents = async () => {
+  deleteEvent = async () => {
     this.setState({queryComplete: false});
     const request = {
       operation: 'DELETEEVENT',
@@ -26,8 +26,7 @@ export default class EventDetailComponents extends Component {
         eventId: this.props.route.params.eventId,
       },
     };
-    const response = await lambda(request);
-
+    await lambda(request);
     this.setState({
       queryComplete: true,
     });
@@ -59,8 +58,9 @@ export default class EventDetailComponents extends Component {
                   {
                     text: 'Delete',
                     onPress: async () => {
-                      this.deleteEvent;
-                      this.props.navigation.replace('MyEvents');
+                      this.deleteEvent();
+                      this.props.navigation.goBack();
+                      this.props.route.params.refresh();
                     },
                   },
                 ]);

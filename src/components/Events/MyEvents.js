@@ -78,7 +78,7 @@ export default class MyAccountComponent extends Component {
               <EventLineComponent
                 address={item.address}
                 navigate={this.props.navigation.navigate}
-                id={item.posterId++}
+                id={item.eventId}
                 eventId={item.eventId}
                 description={item.description}
                 time={
@@ -91,11 +91,13 @@ export default class MyAccountComponent extends Component {
                   new Date(item.startTime).getDate()
                 }
                 month={monthNames[new Date(item.startTime).getMonth()]}
+                refresh={this.getUserEvents}
               />
             </View>
           )}
           style={styles.list}
           scrollEnabled={true}
+          keyExtractor={(item, index) => index.toString()}
         />
       </View>
     ) : (

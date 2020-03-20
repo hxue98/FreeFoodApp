@@ -16,11 +16,12 @@ export default class EventLineComponent extends Component {
             description: this.props.description,
             eventId: this.props.eventId,
             time: this.props.time,
+            refresh: this.props.refresh
           })
         }>
         <View style={styles.timeView}>
           <Text style={styles.date}>{this.props.date}</Text>
-          <Text style={styles.month}>{this.props.month}</Text>
+          <Text style={styles.month}>{this.props.month.substring(0, 3)}</Text>
         </View>
         <View style={styles.descriptionView}>
           <Text style={styles.description}>{this.props.description}</Text>
@@ -51,9 +52,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   month: {
-    fontSize: 12,
+    fontSize: 16,
     marginTop: 8,
-    marginLeft: 5,
+    marginLeft: 10,
   },
   username: {
     flex: 0.5,
