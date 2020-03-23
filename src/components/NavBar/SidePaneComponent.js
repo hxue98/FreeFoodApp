@@ -20,7 +20,7 @@ export default class SidePaneComponent extends Component {
     };
   }
 
-  hide() {
+  hide = () => {
     this.setState({onHide: true});
     this.view.slideInRight(500);
     this.props.hideNav();
@@ -38,7 +38,7 @@ export default class SidePaneComponent extends Component {
             ref={this.handleViewRef}>
             <MenuAccountComponent navigation={this.props.navigation} />
             <Divider style={styles.divider} />
-            <MenuMapsComponent refreshMap={this.props.refreshMap}/>
+            <MenuMapsComponent hideNav={this.hide} refreshMap={this.props.refreshMap}/>
             <Divider style={{...styles.divider, marginTop: 0}} />
             <MenuMyListComponent navigation={this.props.navigation} />
             <Divider style={styles.divider} />

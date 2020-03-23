@@ -316,6 +316,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#139af2',
     width: '44%',
     paddingLeft: 3,
+    borderRadius: 5
   },
   btn: {
     width: 100,

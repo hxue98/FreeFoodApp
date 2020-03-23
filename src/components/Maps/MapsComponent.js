@@ -13,6 +13,7 @@ import Geolocation from 'react-native-geolocation-service';
 import lambda from '../../api';
 import LocationDetailComponent from '../LocationDetail/LocationDetailComponent';
 import SidePaneComponent from '../NavBar/SidePaneComponent';
+import FilterButtonComponent from './FilterButtonComponent';
 import FilterComponent from './FilterComponent';
 import {GOOGLE_API_KEY} from '../../../config';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
@@ -40,11 +41,12 @@ export default class MapComponent extends Component {
       ),
       headerRight: () => (
         <View style={styles.headerRight}>
-          <FilterComponent toggle={this.toggleFilter}/>
+          <FilterButtonComponent toggle={this.toggleFilter}/>
           <TouchableOpacity
             style={styles.add}
             onPress={() => {
               this.props.navigation.navigate('CreateEvents');
+              this.hideAll();
             }}>
             <Image
               style={styles.addImage}
@@ -65,7 +67,13 @@ export default class MapComponent extends Component {
       search: '',
       eventDetail: null,
       showNav: false,
-      showFilter: false
+      showFilter: false,
+      filter: {
+        distanceRange: 1,
+        startTIme: Date.now(),
+        endTime: Date.now() + 7 * 24 * 60 * 60 * 1000,
+        keyword: ''
+      }
     };
   }
 
@@ -73,9 +81,20 @@ export default class MapComponent extends Component {
     this.setState({showFilter: !this.state.showFilter});
   }
 
+  applyFilter = (filter) => {
+    this.setState({filter: filter});
+    this.refresh();
+  }
+
   toggleNav = () => {
     this.setState({showNav: !this.state.showNav});
   };
+
+  hideAll = () => {
+    this.setState({showNav: false});
+    this.setState({showFilter: false});
+    this.setState({eventDetail: null});
+  }
 
   getCurrentLocation() {
     Geolocation.getCurrentPosition(
@@ -152,12 +171,6 @@ export default class MapComponent extends Component {
     });
   }
 
-  hideDetail() {
-    this.setState({
-      eventDetail: null,
-    });
-  }
-
   navigateToComment = eventId => {
     this.props.navigation.navigate('Comments', {eventId: eventId});
   };
@@ -172,7 +185,7 @@ export default class MapComponent extends Component {
             region={this.state.region}
             onRegionChangeComplete={region => this.setState({region: region})}
             style={styles.map}
-            onPress={() => this.hideDetail()}>
+            onPress={() => this.hideAll()}>
             {Platform.OS === 'ios'
               ? this.state.events.map(event => (
                   <Marker
@@ -222,7 +235,7 @@ export default class MapComponent extends Component {
             <Marker
               coordinate={this.state.initLocation}
               pinColor="#1495e0"
-              onPress={() => this.hideDetail()}
+              onPress={() => this.hideAll()}
             />
           </MapView>
           <View style={styles.searchContainer}>
@@ -296,25 +309,7 @@ export default class MapComponent extends Component {
 
         {
           this.state.showFilter && (
-            <Animatable.View
-              style={styles.filterContainer}
-              animation="fadeIn"
-              duration={500}>
-              <Image
-                style={styles.filterTriangle}
-                source={require('../../res/images/filter-triangle.png')}>
-              </Image>
-              <View style={styles.filter}>
-                <TouchableOpacity
-                  style={styles.btn}
-                  onPress={() => this.toggleFilter()}>
-                  <Image
-                    style={styles.image}
-                    source={require('../../res/images/filter-64.png')}
-                  />
-                </TouchableOpacity>
-              </View>
-            </Animatable.View>
+            <FilterComponent filter={this.state.filter} onApplyFilter={this.applyFilter} toggle={this.toggleFilter}/>
           )
         }
         </View>
@@ -417,22 +412,4 @@ const styles = StyleSheet.create({
     width: 45,
     height: 45,
   },
-  filterContainer: {
-    position: 'absolute',
-    top: -10,
-    right: 20
-  },
-  filterTriangle: {
-    width: 50,
-    height: 50,
-    right: -220,
-    backgroundColor: 'red'
-  },
-  filter: {
-    width: 300,
-    height: 200,
-    marginTop: -18,
-    backgroundColor: 'blue',
-    borderRadius: 10
-  }
 });

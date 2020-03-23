@@ -11,7 +11,7 @@ export default class MenuMapsComponent extends Component {
       <View style={styles.container}>
         <TouchableOpacity
           style={styles.btn}
-          onPress={() => this.props.refreshMap()}>
+          onPress={() => {this.props.hideNav(); this.props.refreshMap()}}>
           <Image
             style={styles.image}
             source={require('../../res/images/maps-64.png')}
