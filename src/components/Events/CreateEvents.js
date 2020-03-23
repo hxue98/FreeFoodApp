@@ -183,7 +183,7 @@ export default class CreateEvents extends Component {
         this.state.latitude,
         this.state.longitude,
         this.state.address,
-      ).catch(err => console.error(err));
+      );
       if (res) {
         this.props.navigation.replace('Maps');
       } else {
@@ -198,7 +198,7 @@ export default class CreateEvents extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View>
         {this.state.locationFetchComplete ? (
           <View style={styles.container}>
             <View style={styles.searchContainer}>

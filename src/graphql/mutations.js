@@ -20,13 +20,12 @@ export const createEvent = /* GraphQL */ `
       description
       downvote
       endTime
-      address
-      eventId
       latitude
       longitude
       posterId
       startTime
       upvote
+      address
     }
   }
 `;
@@ -49,13 +48,13 @@ export const deleteEvent = /* GraphQL */ `
       description
       downvote
       endTime
-      address
       eventId
       latitude
       longitude
       posterId
       startTime
       upvote
+      address
     }
   }
 `;
@@ -78,13 +77,13 @@ export const updateEvent = /* GraphQL */ `
       description
       downvote
       endTime
-      address
       eventId
       latitude
       longitude
       posterId
       startTime
       upvote
+      address
     }
   }
 `;
@@ -109,33 +108,6 @@ export const deleteAccount = /* GraphQL */ `
     deleteAccount(input: $input) {
       userId
       password
-    }
-  }
-`;
-export const createFeedback = /* GraphQL */ `
-  mutation CreateFeedback($input: CreateFeedbackInput!) {
-    createFeedback(input: $input) {
-      feedbackId
-      feedback
-      contact
-    }
-  }
-`;
-export const updateFeedback = /* GraphQL */ `
-  mutation UpdateFeedback($input: UpdateFeedbackInput!) {
-    updateFeedback(input: $input) {
-      feedbackId
-      feedback
-      contact
-    }
-  }
-`;
-export const deleteFeedback = /* GraphQL */ `
-  mutation DeleteFeedback($input: DeleteFeedbackInput!) {
-    deleteFeedback(input: $input) {
-      feedbackId
-      feedback
-      contact
     }
   }
 `;

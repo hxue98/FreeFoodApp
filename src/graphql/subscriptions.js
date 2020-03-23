@@ -44,13 +44,13 @@ export const onCreateEvent = /* GraphQL */ `
       description
       downvote
       endTime
-      address
       eventId
       latitude
       longitude
       posterId
       startTime
       upvote
+      address
     }
   }
 `;
@@ -97,13 +97,13 @@ export const onDeleteEvent = /* GraphQL */ `
       description
       downvote
       endTime
-      address
       eventId
       latitude
       longitude
       posterId
       startTime
       upvote
+      address
     }
   }
 `;
@@ -138,13 +138,13 @@ export const onUpdateEvent = /* GraphQL */ `
       description
       downvote
       endTime
-      address
       eventId
       latitude
       longitude
       posterId
       startTime
       upvote
+      address
     }
   }
 `;
@@ -169,57 +169,6 @@ export const onDeleteAccount = /* GraphQL */ `
     onDeleteAccount(userId: $userId, password: $password) {
       userId
       password
-    }
-  }
-`;
-export const onCreateFeedback = /* GraphQL */ `
-  subscription OnCreateFeedback(
-    $feedbackId: String
-    $feedback: String
-    $contact: String
-  ) {
-    onCreateFeedback(
-      feedbackId: $feedbackId
-      feedback: $feedback
-      contact: $contact
-    ) {
-      feedbackId
-      feedback
-      contact
-    }
-  }
-`;
-export const onUpdateFeedback = /* GraphQL */ `
-  subscription OnUpdateFeedback(
-    $feedbackId: String
-    $feedback: String
-    $contact: String
-  ) {
-    onUpdateFeedback(
-      feedbackId: $feedbackId
-      feedback: $feedback
-      contact: $contact
-    ) {
-      feedbackId
-      feedback
-      contact
-    }
-  }
-`;
-export const onDeleteFeedback = /* GraphQL */ `
-  subscription OnDeleteFeedback(
-    $feedbackId: String
-    $feedback: String
-    $contact: String
-  ) {
-    onDeleteFeedback(
-      feedbackId: $feedbackId
-      feedback: $feedback
-      contact: $contact
-    ) {
-      feedbackId
-      feedback
-      contact
     }
   }
 `;
