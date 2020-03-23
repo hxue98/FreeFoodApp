@@ -13,7 +13,6 @@ import Geolocation from 'react-native-geolocation-service';
 import lambda from '../../api';
 import LocationDetailComponent from '../LocationDetail/LocationDetailComponent';
 import SidePaneComponent from '../NavBar/SidePaneComponent';
-import MenuComponent from '../NavBar/MenuComponent';
 import {GOOGLE_API_KEY} from '../../../config';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import * as Animatable from 'react-native-animatable';
@@ -218,19 +217,19 @@ export default class MapComponent extends Component {
                   ))}
               <Marker
                 coordinate={this.state.initLocation}
-                pinColor="blue"
+                pinColor="#1495e0"
                 onPress={() => this.hideDetail()}
               />
             </MapView>
             <View style={styles.searchContainer}>
               <GooglePlacesAutocomplete
                 placeholder="Search Location"
-                minLength={2} // minimum length of text to search
+                minLength={3}
                 autoFocus={false}
                 returnKeyType={'search'}
-                listViewDisplayed="true" // true/false/undefined
+                listViewDisplayed="true"
                 fetchDetails={true}
-                renderDescription={row => row.description} // custom description render
+                renderDescription={row => row.description}
                 onPress={(data, details) => {
                   this.setRegion(details);
                 }}
