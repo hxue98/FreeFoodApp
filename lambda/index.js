@@ -8,9 +8,6 @@ const FS = require('fs');
 const privateKey = FS.readFileSync(__dirname + '\/private.key');
 const keyExpiresIn = '7d';
 
-/* EVENT EXPIRATION */
-const eventExpiresIn = 3 * 60 * 60 * 1000;
-
 /* DB TABLE */
 const ACCOUNT_TABLE_NAME = 'Account';
 const COMMENT_TABLE_NAME = 'Comment';
@@ -98,7 +95,7 @@ exports.handler = async function(event, context) {
 
         case 'GETEVENTS': {
             console.log('get-events');
-            let events = await getEvents();
+            let events = await getEvents(data.params.filter, data.params.latitude, data.params.long);
             return sendResponse({events: events}, true);
         }
 
@@ -163,7 +160,7 @@ async function getComments(eventId) {
     return comments.filter(comment => comment.eventId === eventId);
 }
 
-async function getEvents() {
+async function getEvents(filter, lat, lon) {
     const query = {
         TableName: EVENT_TABLE_NAME
     };
@@ -174,7 +171,29 @@ async function getEvents() {
         }
         events = data.Items;
     }).promise();
-    return events.filter(event => event.endTime + eventExpiresIn > Date.now());
+
+    events = events.filter(event => filterEvent(event, lat, lon, filter));
+    return events;
+}
+
+function filterEvent(event, lat, lon, filter) {
+    return event.startTime > filter.startTime &&
+           event.startTime < filter.endTime &&
+           calculateDistance(event.latitude, event.longitude, lat, lon) <= filter.distanceRange &&
+           event.description.includes(filter.keyword);
+}
+
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const r = 6371;
+    const p1 = lat1 * Math.PI / 180,
+          p2 = lat2 * Math.PI / 180,
+          dp = (lat2 - lat1) * Math.PI / 180,
+          dl = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dp / 2) * Math.sin(dp / 2) +
+              Math.cos(p1) * Math.cos(p2) *
+              Math.sin(dl / 2) * Math.sin(dl / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return r * c * 0.62137;
 }
 
 async function getUserEvents(userId) {

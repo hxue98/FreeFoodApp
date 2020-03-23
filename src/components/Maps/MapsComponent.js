@@ -62,7 +62,7 @@ export default class MapComponent extends Component {
       initLocation: null,
       region: null,
       events: [],
-      locationFetchCompolete: false,
+      locationFetchComplete: false,
       queryComplete: false,
       search: '',
       eventDetail: null,
@@ -70,7 +70,7 @@ export default class MapComponent extends Component {
       showFilter: false,
       filter: {
         distanceRange: 1,
-        startTIme: Date.now(),
+        startTime: Date.now(),
         endTime: Date.now() + 7 * 24 * 60 * 60 * 1000,
         keyword: ''
       }
@@ -81,14 +81,23 @@ export default class MapComponent extends Component {
     this.setState({showFilter: !this.state.showFilter});
   }
 
-  applyFilter = (filter) => {
-    this.setState({filter: filter});
+  applyFilter = (newfilter) => {
+    this.state.filter = newfilter;
     this.refresh();
+  }
+
+  resetFilter = () => {
+    this.setState({filter: {
+      distanceRange: 1,
+      startTime: Date.now(),
+      endTime: Date.now() + 7 * 24 * 60 * 60 * 1000,
+      keyword: ''
+    }});
   }
 
   toggleNav = () => {
     this.setState({showNav: !this.state.showNav});
-  };
+  }
 
   hideAll = () => {
     this.setState({showNav: false});
@@ -110,8 +119,9 @@ export default class MapComponent extends Component {
         this.setState({
           initLocation: region,
           region: region,
-          locationFetchCompolete: true,
+          locationFetchComplete: true,
         });
+        this.refresh();
       },
       error => {
         console.error(error.code, error.message);
@@ -132,20 +142,24 @@ export default class MapComponent extends Component {
         this.getCurrentLocation();
       }
     }
-  };
+  }
 
   refresh = async () => {
     this.setState({queryComplete: false});
     const request = {
       operation: 'GETEVENTS',
+      params: {
+        filter: this.state.filter,
+        latitude: this.state.initLocation.latitude,
+        longitude: this.state.initLocation.longitude
+      }
     };
     const response = await lambda(request);
     this.setState({events: response.events, queryComplete: true});
-  };
+  }
 
   async componentDidMount() {
     this.requestLocationPermission();
-    this.refresh();
   }
 
   setRegion(details) {
@@ -173,11 +187,11 @@ export default class MapComponent extends Component {
 
   navigateToComment = eventId => {
     this.props.navigation.navigate('Comments', {eventId: eventId});
-  };
+  }
 
   render() {
     const component =
-      this.state.locationFetchCompolete && this.state.queryComplete ? (
+      this.state.locationFetchComplete && this.state.queryComplete ? (
         <View style={styles.container}>
           <MapView
             provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : null}

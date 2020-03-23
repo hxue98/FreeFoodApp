@@ -8,6 +8,7 @@ import {
   Alert,
   Text,
   TouchableOpacity,
+  ActivityIndicator
 } from 'react-native';
 import API, {graphqlOperation} from '@aws-amplify/api';
 import {createEvent} from '../../graphql/mutations';
@@ -28,7 +29,6 @@ async function createNewEvents(
   address,
 ) {
   const event = {
-    eventId: 0,
     posterId: posterId,
     description: text,
     startTime: startTime,
@@ -58,6 +58,7 @@ export default class CreateEvents extends Component {
       chosenEndDate: '',
       address: '',
       currentLocation: null,
+      locationFetchComplete: false
     };
   }
 
@@ -138,6 +139,7 @@ export default class CreateEvents extends Component {
               },
             },
           },
+          locationFetchComplete: true
         });
       },
       error => {
@@ -197,95 +199,103 @@ export default class CreateEvents extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.searchContainer}>
-          <GooglePlacesAutocomplete
-            placeholder="Search Location"
-            minLength={3}
-            autoFocus={false}
-            returnKeyType={'search'}
-            listViewDisplayed="true"
-            fetchDetails={true}
-            renderDescription={row => row.description}
-            onPress={(data, details) => {
-              this.setLocation(details, data);
-            }}
-            ref={c => (this.googlePlacesAutocomplete = c)}
-            query={{
-              key: GOOGLE_API_KEY,
-              language: 'en',
-            }}
-            styles={{
-              textInputContainer: {
-                width: '100%',
-              },
-              description: {
-                fontWeight: 'bold',
-              },
-              predefinedPlacesDescription: {
-                color: '#1faadb',
-              },
-            }}
-            predefinedPlaces={[this.state.currentLocation]}
-            predefinedPlacesAlwaysVisible={true}
-          />
-          <TouchableOpacity
-            onPress={() => this.googlePlacesAutocomplete.setAddressText('')}
-            style={styles.cancelSearch}>
-            <Image
-              style={styles.cancelSearchImage}
-              source={require('../../res/images/clear-search-24.png')}
-            />
-          </TouchableOpacity>
-        </View>
+        {this.state.locationFetchComplete ? (
+          <View style={styles.container}>
+            <View style={styles.searchContainer}>
+              <GooglePlacesAutocomplete
+                placeholder="Search Location"
+                minLength={3}
+                autoFocus={false}
+                returnKeyType={'search'}
+                listViewDisplayed="true"
+                fetchDetails={true}
+                renderDescription={row => row.description}
+                onPress={(data, details) => {
+                  this.setLocation(details, data);
+                }}
+                ref={c => (this.googlePlacesAutocomplete = c)}
+                query={{
+                  key: GOOGLE_API_KEY,
+                  language: 'en',
+                }}
+                styles={{
+                  textInputContainer: {
+                    width: '100%',
+                  },
+                  description: {
+                    fontWeight: 'bold',
+                  },
+                  predefinedPlacesDescription: {
+                    color: '#1faadb',
+                  },
+                }}
+                predefinedPlaces={[this.state.currentLocation]}
+                predefinedPlacesAlwaysVisible={true}
+              />
+              <TouchableOpacity
+                onPress={() => this.googlePlacesAutocomplete.setAddressText('')}
+                style={styles.cancelSearch}>
+                <Image
+                  style={styles.cancelSearchImage}
+                  source={require('../../res/images/clear-search-24.png')}
+                />
+              </TouchableOpacity>
+            </View>
 
-        <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity
-            style={styles.datePicker}
-            onPress={this.showStartPicker}>
-            <DateTimePickerModal
-              isVisible={this.state.isVisible}
-              onConfirm={this.startPicker}
-              onCancel={this.hideStartPicker}
-              mode="datetime"
-              is24Hour={false}
+            <View style={{flexDirection: 'row'}}>
+              <TouchableOpacity
+                style={styles.datePicker}
+                onPress={this.showStartPicker}>
+                <DateTimePickerModal
+                  isVisible={this.state.isVisible}
+                  onConfirm={this.startPicker}
+                  onCancel={this.hideStartPicker}
+                  mode="datetime"
+                  is24Hour={false}
+                />
+                <Text style={styles.text}>
+                  {'Start Time: ' + this.state.chosenStartDate}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.datePicker}
+                onPress={this.showEndPicker}>
+                <DateTimePickerModal
+                  isVisible={this.state.isEndVisible}
+                  onConfirm={this.endPicker}
+                  onCancel={this.hideEndPicker}
+                  mode="datetime"
+                  is24Hour={false}
+                />
+                <Text style={styles.text}>
+                  {'End Time: ' + this.state.chosenEndDate}
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <TextInput
+              style={styles.description}
+              placeholder="Description"
+              multiline={true}
+              textAlignVertical={'top'}
+              underlineColorAndroid={'transparent'}
+              onChangeText={text => this.setState({eventText: text})}
+              value={this.state.eventText}
             />
-            <Text style={styles.text}>
-              {'Start Time: ' + this.state.chosenStartDate}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.datePicker}
-            onPress={this.showEndPicker}>
-            <DateTimePickerModal
-              isVisible={this.state.isEndVisible}
-              onConfirm={this.endPicker}
-              onCancel={this.hideEndPicker}
-              mode="datetime"
-              is24Hour={false}
-            />
-            <Text style={styles.text}>
-              {'End Time: ' + this.state.chosenEndDate}
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <TextInput
-          style={styles.description}
-          placeholder="Description"
-          multiline={true}
-          textAlignVertical={'top'}
-          underlineColorAndroid={'transparent'}
-          onChangeText={text => this.setState({eventText: text})}
-          value={this.state.eventText}
-        />
 
-        <TouchableOpacity style={styles.btn}>
-          <Button
-            onPress={() => {
-              this.confirmed();
-            }}
-            title="Confirm"
-          />
-        </TouchableOpacity>
+            <TouchableOpacity style={styles.btn}>
+              <Button
+                onPress={() => {
+                  this.confirmed();
+                }}
+                title="Confirm"
+              />
+            </TouchableOpacity>
+          </View>
+          ) : (
+            <View style={styles.loading}>
+              <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+          )}
       </View>
     );
   }
@@ -295,6 +305,12 @@ const styles = StyleSheet.create({
   container: {
     height: '100%',
     width: '100%',
+  },
+  loading: {
+    height: '100%',
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   description: {
     height: 200,

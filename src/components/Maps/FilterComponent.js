@@ -30,7 +30,7 @@ export default class FilterComponent extends Component {
   resetFilter = () => {
     const filter = {
       distanceRange: 1,
-      startTIme: Date.now(),
+      startTime: Date.now(),
       endTime: Date.now() + 7 * 24 * 60 * 60 * 1000,
       keyword: ''
     };
