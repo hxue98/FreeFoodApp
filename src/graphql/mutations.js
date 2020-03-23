@@ -112,3 +112,30 @@ export const deleteAccount = /* GraphQL */ `
     }
   }
 `;
+export const createFeedback = /* GraphQL */ `
+  mutation CreateFeedback($input: CreateFeedbackInput!) {
+    createFeedback(input: $input) {
+      feedbackId
+      feedback
+      contact
+    }
+  }
+`;
+export const updateFeedback = /* GraphQL */ `
+  mutation UpdateFeedback($input: UpdateFeedbackInput!) {
+    updateFeedback(input: $input) {
+      feedbackId
+      feedback
+      contact
+    }
+  }
+`;
+export const deleteFeedback = /* GraphQL */ `
+  mutation DeleteFeedback($input: DeleteFeedbackInput!) {
+    deleteFeedback(input: $input) {
+      feedbackId
+      feedback
+      contact
+    }
+  }
+`;

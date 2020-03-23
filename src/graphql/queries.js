@@ -96,3 +96,28 @@ export const listAccounts = /* GraphQL */ `
     }
   }
 `;
+export const getFeedback = /* GraphQL */ `
+  query GetFeedback($feedbackId: String!) {
+    getFeedback(feedbackId: $feedbackId) {
+      feedbackId
+      feedback
+      contact
+    }
+  }
+`;
+export const listFeedbacks = /* GraphQL */ `
+  query ListFeedbacks(
+    $filter: TableFeedbackFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listFeedbacks(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        feedbackId
+        feedback
+        contact
+      }
+      nextToken
+    }
+  }
+`;

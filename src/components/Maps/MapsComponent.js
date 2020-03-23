@@ -48,7 +48,8 @@ export default class MapComponent extends Component {
             source={require('../../res/images/add.png')}
           />
         </TouchableOpacity>
-    )});
+      ),
+    });
     super(props);
     this.state = {
       initLocation: null,
@@ -64,7 +65,7 @@ export default class MapComponent extends Component {
 
   toggleNav = () => {
     this.setState({showNav: !this.state.showNav});
-  }
+  };
 
   getCurrentLocation() {
     Geolocation.getCurrentPosition(
@@ -166,7 +167,7 @@ export default class MapComponent extends Component {
               provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : null}
               initialRegion={this.state.initLocation}
               region={this.state.region}
-              onRegionChangeComplete={(region) => this.setState({region: region})}
+              onRegionChangeComplete={region => this.setState({region: region})}
               style={styles.map}
               onPress={() => this.hideDetail()}>
               {Platform.OS === 'ios'
@@ -299,9 +300,16 @@ export default class MapComponent extends Component {
     return (
       <View>
         {component}
-        <SidePaneComponent ref='navBar' navigation={this.props.navigation} show={this.state.showNav} hideNav={() => {setTimeout(() => this.toggleNav(), 300)}}/>
+        <SidePaneComponent
+          ref="navBar"
+          navigation={this.props.navigation}
+          show={this.state.showNav}
+          hideNav={() => {
+            setTimeout(() => this.toggleNav(), 300);
+          }}
+        />
       </View>
-    )
+    );
   }
 }
 
@@ -370,10 +378,9 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
   },
-  add: {
-  },
+  add: {},
   addImage: {
     width: 50,
-    height: 50
-  }
+    height: 50,
+  },
 });

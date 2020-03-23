@@ -8,15 +8,15 @@ import MenuMyListComponent from './MenuMyListComponent';
 import MenuSettingsComponent from './MenuSettingsComponent';
 
 export default class SidePaneComponent extends Component {
-  handleViewRef = ref => this.view = ref;
+  handleViewRef = ref => (this.view = ref);
 
   constructor(props) {
     super(props);
 
     this.state = {
       onHide: false,
-      menu: []
-    }
+      menu: [],
+    };
   }
 
   hide() {
@@ -29,25 +29,27 @@ export default class SidePaneComponent extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {
-          this.props.show && (
-            <Animatable.View
-              style={{...styles.navBar, left: !this.state.onHide ? 0 : '-25%'}}
-              animation="slideInLeft"
-              duration={500}
-              ref={this.handleViewRef}>
-              <MenuAccountComponent navigation={this.props.navigation}/>
-              <Divider style={styles.divider} />
-              <MenuMyListComponent navigation={this.props.navigation}/>
-              <Divider style={styles.divider} />
-              <MenuSettingsComponent navigation={this.props.navigation}/>
-              <Divider style={styles.divider} />
-              <MenuLogoutComponent navigation={this.props.navigation}/>
-            </Animatable.View>
+        {this.props.show && (
+          <Animatable.View
+            style={{...styles.navBar, left: !this.state.onHide ? 0 : '-25%'}}
+            animation="slideInLeft"
+            duration={500}
+            ref={this.handleViewRef}>
+            <MenuAccountComponent navigation={this.props.navigation} />
+            <Divider style={styles.divider} />
+            <MenuMyListComponent navigation={this.props.navigation} />
+            <Divider style={styles.divider} />
+            <MenuSettingsComponent navigation={this.props.navigation} />
+            <Divider style={styles.divider} />
+            <MenuLogoutComponent navigation={this.props.navigation} />
+            <View style={{height: 600}} />
+          </Animatable.View>
         )}
-        {
-          this.props.show && (
-            <View style={styles.shadow} onStartShouldSetResponder={() => this.hide()}/>
+        {this.props.show && (
+          <View
+            style={styles.shadow}
+            onStartShouldSetResponder={() => this.hide()}
+          />
         )}
       </View>
     );
@@ -56,17 +58,15 @@ export default class SidePaneComponent extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    height: '100%',
     position: 'absolute',
     left: 0,
     top: 0,
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   navBar: {
     backgroundColor: 'white',
     flex: 4.5,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 5,
       height: 0,
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   },
   shadow: {
     flex: 5.5,
-    backgroundColor: '#00000000'
+    backgroundColor: '#00000000',
   },
   divider: {
     height: 2,
