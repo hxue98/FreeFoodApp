@@ -13,6 +13,7 @@ import Geolocation from 'react-native-geolocation-service';
 import lambda from '../../api';
 import LocationDetailComponent from '../LocationDetail/LocationDetailComponent';
 import SidePaneComponent from '../NavBar/SidePaneComponent';
+import FilterComponent from './FilterComponent';
 import {GOOGLE_API_KEY} from '../../../config';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import * as Animatable from 'react-native-animatable';
@@ -33,21 +34,25 @@ export default class MapComponent extends Component {
           }}>
           <Image
             style={styles.menuImage}
-            source={require('../../res/images/menu.png')}
+            source={require('../../res/images/menu-64.png')}
           />
         </TouchableOpacity>
       ),
       headerRight: () => (
-        <TouchableOpacity
-          style={styles.add}
-          onPress={() => {
-            this.props.navigation.navigate('CreateEvents');
-          }}>
-          <Image
-            style={styles.addImage}
-            source={require('../../res/images/add.png')}
-          />
-        </TouchableOpacity>
+        <View style={styles.headerRight}>
+          <FilterComponent toggle={this.toggleFilter}/>
+          <TouchableOpacity
+            style={styles.add}
+            onPress={() => {
+              this.props.navigation.navigate('CreateEvents');
+            }}>
+            <Image
+              style={styles.addImage}
+              source={require('../../res/images/add-64.png')}
+            />
+          </TouchableOpacity>
+        </View>
+
       ),
     });
     super(props);
@@ -60,7 +65,12 @@ export default class MapComponent extends Component {
       search: '',
       eventDetail: null,
       showNav: false,
+      showFilter: false
     };
+  }
+
+  toggleFilter = () => {
+    this.setState({showFilter: !this.state.showFilter});
   }
 
   toggleNav = () => {
@@ -282,6 +292,31 @@ export default class MapComponent extends Component {
               />
             </Animatable.View>
           )}
+
+
+        {
+          this.state.showFilter && (
+            <Animatable.View
+              style={styles.filterContainer}
+              animation="fadeIn"
+              duration={500}>
+              <Image
+                style={styles.filterTriangle}
+                source={require('../../res/images/filter-triangle.png')}>
+              </Image>
+              <View style={styles.filter}>
+                <TouchableOpacity
+                  style={styles.btn}
+                  onPress={() => this.toggleFilter()}>
+                  <Image
+                    style={styles.image}
+                    source={require('../../res/images/filter-64.png')}
+                  />
+                </TouchableOpacity>
+              </View>
+            </Animatable.View>
+          )
+        }
         </View>
       ) : (
         <View style={styles.loading}>
@@ -309,6 +344,9 @@ export default class MapComponent extends Component {
 const window = Dimensions.get('window');
 
 const styles = StyleSheet.create({
+  headerRight: {
+    flexDirection: 'row'
+  },
   container: {
     height: window.height,
     width: window.width,
@@ -365,15 +403,36 @@ const styles = StyleSheet.create({
     opacity: 0.2,
   },
   menu: {
-    left: 0,
+    left: 5,
   },
   menuImage: {
-    width: 70,
-    height: 70,
-  },
-  add: {},
-  addImage: {
     width: 50,
     height: 50,
   },
+  add: {
+    alignSelf: 'center',
+    right: 5
+  },
+  addImage: {
+    width: 45,
+    height: 45,
+  },
+  filterContainer: {
+    position: 'absolute',
+    top: -10,
+    right: 20
+  },
+  filterTriangle: {
+    width: 50,
+    height: 50,
+    right: -220,
+    backgroundColor: 'red'
+  },
+  filter: {
+    width: 300,
+    height: 200,
+    marginTop: -18,
+    backgroundColor: 'blue',
+    borderRadius: 10
+  }
 });
