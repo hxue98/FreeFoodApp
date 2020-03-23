@@ -54,7 +54,8 @@ exports.handler = async function(event, context) {
                 }
             });
             console.log('user added to db: ', Item);
-            return sendResponse(null, true);
+            const token = JWT.sign({userId: data.params.userId}, privateKey, {expiresIn: keyExpiresIn});
+            return sendResponse({token: token}, true);
         }
 
         case 'LOGIN': {

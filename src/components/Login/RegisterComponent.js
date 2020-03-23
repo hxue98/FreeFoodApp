@@ -13,6 +13,7 @@ import Hashes from 'jshashes';
 import lambda from '../../api';
 import {connect} from 'react-redux';
 import {storeUserId} from '../../redux/actions';
+import AsyncStorage from '@react-native-community/async-storage';
 
 async function register(userId, password) {
   const request = {
@@ -24,6 +25,13 @@ async function register(userId, password) {
   };
 
   const response = await lambda(request);
+  try {
+    if (response.token) {
+      AsyncStorage.setItem('@token', response.token);
+    }
+  } catch (e) {
+    console.error(e);
+  }
   return response;
 }
 

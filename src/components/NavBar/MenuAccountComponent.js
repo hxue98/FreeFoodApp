@@ -7,8 +7,8 @@ export default class MenuAccountComponent extends Component {
     super(props);
 
     var userId = store.getState().userId;
-    if (userId.length > 10) {
-      userId = userId.substring(0, 10) + '...';
+    if (userId.length > 7) {
+      userId = userId.substring(0, 7) + '...';
     }
     this.state = {
       userId: userId
@@ -25,7 +25,7 @@ export default class MenuAccountComponent extends Component {
             style={styles.userImage}
             source={require('../../res/images/user-64.png')}
           />
-          <Text style={styles.userNameText}>{store.getState().userId}</Text>
+          <Text style={styles.userNameText}>{this.state.userId}</Text>
         </TouchableOpacity>
       </View>
     );

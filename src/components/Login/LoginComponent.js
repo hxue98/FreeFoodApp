@@ -26,8 +26,11 @@ async function login(userId, password) {
   };
 
   const response = await lambda(request);
+  console.log(response.token);
   try {
-    AsyncStorage.setItem('@token', response.token);
+    if (response.token) {
+      AsyncStorage.setItem('@token', response.token);
+    }
   } catch (e) {
     console.error(e);
   }
