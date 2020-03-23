@@ -8,35 +8,56 @@ import {
   Platform,
 } from 'react-native';
 import {Divider} from 'react-native-elements';
+import {CheckBox} from 'native-base';
 import store from '../../redux/store';
 
 export default class Settings extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      check: false,
+    };
+  }
+  handleCheck() {
+    if (this.state.check) {
+      this.setState({check: !this.state.check});
+    } else {
+      this.setState({check: !this.state.check});
+    }
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <TouchableOpacity
-          style={styles.imageAndUserNameView}
-          //   onPress={() => this.props.navigation.navigate('MyEvents')}
-        >
-          <Text style={styles.iconText}>Message Notifications</Text>
-          <Image
-            style={styles.iconArrow}
-            source={require('../../res/images/circled-right-64.png')}
-          />
-        </TouchableOpacity>
+        <View style={styles.touchableView}>
+          <View style={styles.textView}>
+            <Text style={styles.iconText}>Message Notifications</Text>
+          </View>
+          <View style={styles.checkBoxView}>
+            <CheckBox
+              checked={this.state.check}
+              onPress={() => this.handleCheck()}
+            />
+          </View>
+        </View>
 
         <Divider style={styles.divider} />
 
-        <TouchableOpacity style={styles.imageAndUserNameView}>
-          <Text style={styles.iconText}>Help Feedback</Text>
-          <Image
-            style={styles.iconArrow}
-            source={require('../../res/images/circled-right-64.png')}
-          />
+        <TouchableOpacity
+          style={styles.touchableView}
+          onPress={() => {
+            this.props.navigation.navigate('Feedback');
+          }}>
+          <View style={styles.textView}>
+            <Text style={styles.iconText}>Help Feedback</Text>
+          </View>
+
+          <View style={styles.iconArrow}>
+            <Image
+              style={styles.iconImage}
+              source={require('../../res/images/circled-right-64.png')}
+            />
+          </View>
         </TouchableOpacity>
       </View>
     );
@@ -48,37 +69,37 @@ const styles = StyleSheet.create({
     height: window.height,
     width: window.width,
   },
-  imageAndUserNameView: {
+  touchableView: {
     flexDirection: 'row',
+    height: 45,
   },
-  userImage: {
-    marginLeft: 20,
-    marginTop: 50,
-    marginRight: 20,
-  },
-  userNameText: {
-    marginTop: 55,
-    marginRight: 20,
-    fontSize: 20,
+  textView: {
+    flex: 9,
+    width: 50,
   },
 
   iconImage: {
     width: 30,
     height: 30,
-    marginLeft: 20,
-    marginTop: 20,
-    marginRight: 20,
   },
   iconText: {
-    marginTop: 25,
-    marginRight: 20,
-    fontSize: 15,
+    marginTop: 20,
+    marginLeft: 10,
+    marginRight: 25,
+    fontSize: 16,
   },
   iconArrow: {
-    width: 30,
-    height: 30,
+    width: 5,
+    height: 5,
+    marginTop: 15,
+    flex: 1,
+  },
+  checkBoxView: {
+    width: 5,
+    height: 5,
     marginTop: 20,
-    marginLeft: 200,
+    marginLeft: 150,
+    flex: 2,
   },
   divider: {
     height: 2,

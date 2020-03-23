@@ -85,11 +85,7 @@ export default class MyAccountComponent extends Component {
                   new Date(item.startTime).toLocaleTimeString() +
                   new Date(item.startTime).toLocaleDateString()
                 }
-                date={
-                  //   new Date(item.startTime).toLocaleTimeString() +
-                  //   ' ' +
-                  new Date(item.startTime).getDate()
-                }
+                date={new Date(item.startTime).getDate()}
                 month={monthNames[new Date(item.startTime).getMonth()]}
                 refresh={this.getUserEvents}
               />

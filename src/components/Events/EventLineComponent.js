@@ -16,7 +16,7 @@ export default class EventLineComponent extends Component {
             description: this.props.description,
             eventId: this.props.eventId,
             time: this.props.time,
-            refresh: this.props.refresh
+            refresh: this.props.refresh,
           })
         }>
         <View style={styles.timeView}>

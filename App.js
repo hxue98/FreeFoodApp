@@ -1,5 +1,5 @@
-import React from 'react';
-import {YellowBox, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import React, {Component} from 'react';
+import {YellowBox} from 'react-native';
 import API from '@aws-amplify/api';
 import PubSub from '@aws-amplify/pubsub';
 import config from './aws-exports';
@@ -18,6 +18,7 @@ import MyAccount from './src/components/MyAccount/MyAccountComponent';
 import MyEvents from './src/components/Events/MyEvents';
 import EventDetail from './src/components/Events/EventDetailComponents';
 import Settings from './src/components/MyAccount/Settings';
+import Feedback from './src/components/Feedback/Feedback';
 import store from './src/redux/store';
 API.configure(config);
 PubSub.configure(config);
@@ -45,13 +46,11 @@ export default function App() {
           <Stack.Screen name="Detail" component={LocationDetailComponent} />
           <Stack.Screen name="Comments" component={CommentComponent} />
           <Stack.Screen name="CreateEvents" component={CreateEvents} />
-          <Stack.Screen
-            name="MyAccount"
-            component={MyAccount}
-          />
+          <Stack.Screen name="MyAccount" component={MyAccount} />
           <Stack.Screen name="MyEvents" component={MyEvents} />
           <Stack.Screen name="EventDetail" component={EventDetail} />
           <Stack.Screen name="Settings" component={Settings} />
+          <Stack.Screen name="Feedback" component={Feedback} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

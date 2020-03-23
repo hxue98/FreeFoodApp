@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 import Hashes from 'jshashes';
 import lambda from '../../api';
+import {connect} from 'react-redux';
+import {storeUserId} from '../../redux/actions';
 
 async function register(userId, password) {
   const request = {
@@ -25,11 +27,10 @@ async function register(userId, password) {
   return response;
 }
 
-export default class RegisterComponent extends Component {
+class RegisterComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userId: '',
       password: '',
     };
   }
@@ -79,6 +80,7 @@ export default class RegisterComponent extends Component {
                   );
                   if (res.success) {
                     this.props.navigation.replace('Maps');
+                    this.props.storeUserId(this.state.userId);
                   } else {
                     Alert.alert('Error', 'Username is taken');
                   }
@@ -95,12 +97,26 @@ export default class RegisterComponent extends Component {
         </View>
 
         <View style={styles.footer}>
-            <Text style={styles.footerText}>APP by Team TRIANGLE</Text>
+          <Text style={styles.footerText}>APP by Team TRIANGLE</Text>
         </View>
       </View>
     );
   }
 }
+
+function mapStateToProps(state) {
+  return {
+    userId: state.userId,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    storeUserId: userId => dispatch(storeUserId(userId)),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(RegisterComponent);
 
 const styles = StyleSheet.create({
   container: {
@@ -137,10 +153,10 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   footer: {
-    flex: .1,
-    alignSelf: 'center'
+    flex: 0.1,
+    alignSelf: 'center',
   },
   footerText: {
-    color: '#a6a6a699'
-  }
+    color: '#a6a6a699',
+  },
 });
