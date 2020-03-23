@@ -3,6 +3,7 @@ import {Image, StyleSheet, View} from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import {Divider} from 'react-native-elements';
 import MenuAccountComponent from './MenuAccountComponent';
+import MenuMapsComponent from './MenuMapsComponent';
 import MenuLogoutComponent from './MenuLogoutComponent';
 import MenuMyListComponent from './MenuMyListComponent';
 import MenuSettingsComponent from './MenuSettingsComponent';
@@ -37,11 +38,14 @@ export default class SidePaneComponent extends Component {
             ref={this.handleViewRef}>
             <MenuAccountComponent navigation={this.props.navigation} />
             <Divider style={styles.divider} />
+            <MenuMapsComponent refreshMap={this.props.refreshMap}/>
+            <Divider style={{...styles.divider, marginTop: 0}} />
             <MenuMyListComponent navigation={this.props.navigation} />
             <Divider style={styles.divider} />
             <MenuSettingsComponent navigation={this.props.navigation} />
             <Divider style={styles.divider} />
             <MenuLogoutComponent navigation={this.props.navigation} />
+            <Divider style={styles.divider} />
             <View style={{height: 600}} />
           </Animatable.View>
         )}

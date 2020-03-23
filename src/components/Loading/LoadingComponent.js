@@ -19,7 +19,7 @@ class LoadingComponent extends Component {
       } catch (e) {
         console.error(e);
       }
-    }, 3000);
+    }, 2000);
   }
 
   checkToken = async function(token) {

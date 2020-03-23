@@ -5,7 +5,6 @@ import lambda from '../../api';
 import CommentInputComponent from './CommentInputComponent';
 import CommentLineComponent from './CommentLineComponent';
 
-//TODO replace eventId
 export default class CommentComponent extends Component {
   constructor(props) {
     super(props);
