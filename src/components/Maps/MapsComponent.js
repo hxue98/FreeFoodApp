@@ -94,15 +94,11 @@ export default class MapComponent extends Component {
   requestLocationPermission = async () => {
     if (Platform.OS === 'ios') {
       var response = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-
-      console.log('iPhone: ' + response);
-
       if (response === 'granted') {
         this.getCurrentLocation();
       }
     } else {
       var response = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-      console.log('Android: ' + response);
       if (response === 'granted') {
         this.getCurrentLocation();
       }
