@@ -41,13 +41,13 @@ class LoadingComponent extends Component {
 
   render() {
     return (
-      <View style={{backgroundColor: 'white', width: '100%', height: '100%'}}>
+      <View style={{backgroundColor: 'white', width: '100%', height: '100%', justifyContent: 'center'}}>
         <Image
           style={{
             width: 300,
             height: 300,
             alignSelf: 'center',
-            marginTop: 250,
+            marginBottom: 100
           }}
           source={require('../../res/images/team-logo.png')}
         />
@@ -57,7 +57,7 @@ class LoadingComponent extends Component {
             height: 50,
             alignSelf: 'center',
             position: 'absolute',
-            bottom: '10%',
+            bottom: '5%',
           }}
           source={require('../../res/images/team-name.png')}
         />

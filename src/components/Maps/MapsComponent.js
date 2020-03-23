@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {
-  Alert,
   View,
   StyleSheet,
   Dimensions,
@@ -13,38 +12,44 @@ import MapView, {PROVIDER_GOOGLE, Marker, Callout} from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 import lambda from '../../api';
 import LocationDetailComponent from '../LocationDetail/LocationDetailComponent';
+import SidePaneComponent from '../NavBar/SidePaneComponent';
 import MenuComponent from '../NavBar/MenuComponent';
 import {GOOGLE_API_KEY} from '../../../config';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import * as Animatable from 'react-native-animatable';
-import AsyncStorage from '@react-native-community/async-storage';
 import {request, PERMISSIONS} from 'react-native-permissions';
 
 export default class MapComponent extends Component {
   constructor(props) {
     props.navigation.setOptions({
-      headerRight: () => (
+      headerLeft: () => (
         <TouchableOpacity
-          style={styles.logout}
-          onPress={async () => {
-            Alert.alert('Log out', 'Are you sure to log out?', [
-              {text: 'Cancel'},
-              {
-                text: 'OK',
-                onPress: async () => {
-                  await AsyncStorage.removeItem('@token');
-                  this.props.navigation.replace('Login');
-                },
-              },
-            ]);
+          style={styles.menu}
+          onPress={() => {
+            if (this.state.showNav) {
+              this.refs.navBar.hide();
+            } else {
+              this.toggleNav();
+            }
           }}>
           <Image
-            style={styles.logoutImage}
-            source={require('../../res/images/logout.png')}
+            style={styles.menuImage}
+            source={require('../../res/images/menu.png')}
           />
         </TouchableOpacity>
       ),
-    });
+      headerRight: () => (
+        <TouchableOpacity
+          style={styles.add}
+          onPress={() => {
+            this.props.navigation.navigate('CreateEvents');
+          }}>
+          <Image
+            style={styles.addImage}
+            source={require('../../res/images/add.png')}
+          />
+        </TouchableOpacity>
+    )});
     super(props);
     this.state = {
       initLocation: null,
@@ -54,7 +59,12 @@ export default class MapComponent extends Component {
       queryComplete: false,
       search: '',
       eventDetail: null,
+      showNav: false,
     };
+  }
+
+  toggleNav = () => {
+    this.setState({showNav: !this.state.showNav});
   }
 
   getCurrentLocation() {
@@ -80,6 +90,7 @@ export default class MapComponent extends Component {
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
   }
+
   requestLocationPermission = async () => {
     if (Platform.OS === 'ios') {
       var response = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
@@ -147,10 +158,6 @@ export default class MapComponent extends Component {
     this.props.navigation.navigate('Comments', {eventId: eventId});
   };
 
-  navigateToMyAccount = () => {
-    this.props.navigation.navigate('MyAccount');
-  };
-
   render() {
     const component =
       this.state.locationFetchCompolete && this.state.queryComplete ? (
@@ -160,6 +167,7 @@ export default class MapComponent extends Component {
               provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : null}
               initialRegion={this.state.initLocation}
               region={this.state.region}
+              onRegionChangeComplete={(region) => this.setState({region: region})}
               style={styles.map}
               onPress={() => this.hideDetail()}>
               {Platform.OS === 'ios'
@@ -282,13 +290,6 @@ export default class MapComponent extends Component {
               </Animatable.View>
             )}
           </View>
-          <View style={styles.menu}>
-            <MenuComponent
-              navigate={this.props.navigation.navigate}
-              refreshMap={this.refresh}
-              navigateToMyAccount={this.navigateToMyAccount}
-            />
-          </View>
         </View>
       ) : (
         <View style={styles.loading}>
@@ -296,7 +297,12 @@ export default class MapComponent extends Component {
         </View>
       );
 
-    return <View>{component}</View>;
+    return (
+      <View>
+        {component}
+        <SidePaneComponent ref='navBar' navigation={this.props.navigation} show={this.state.showNav} hideNav={() => {setTimeout(() => this.toggleNav(), 300)}}/>
+      </View>
+    )
   }
 }
 
@@ -358,16 +364,17 @@ const styles = StyleSheet.create({
     height: 25,
     opacity: 0.2,
   },
-  logout: {
-    right: 10,
-  },
-  logoutImage: {
-    width: 40,
-    height: 40,
-  },
   menu: {
-    height: 50,
-    width: '100%',
-    flex: 2,
+    left: 0,
   },
+  menuImage: {
+    width: 70,
+    height: 70,
+  },
+  add: {
+  },
+  addImage: {
+    width: 50,
+    height: 50
+  }
 });
