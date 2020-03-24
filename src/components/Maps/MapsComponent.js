@@ -69,7 +69,7 @@ export default class MapComponent extends Component {
       showNav: false,
       showFilter: false,
       filter: {
-        distanceRange: 1,
+        distanceRange: 10,
         startTime: Date.now(),
         endTime: Date.now() + 7 * 24 * 60 * 60 * 1000,
         keyword: ''
@@ -88,11 +88,16 @@ export default class MapComponent extends Component {
 
   resetFilter = () => {
     this.setState({filter: {
-      distanceRange: 1,
+      distanceRange: 10,
       startTime: Date.now(),
       endTime: Date.now() + 7 * 24 * 60 * 60 * 1000,
       keyword: ''
     }});
+  }
+
+  resetMap = () => {
+    this.resetFilter();
+    this.refresh();
   }
 
   toggleNav = () => {
@@ -155,6 +160,7 @@ export default class MapComponent extends Component {
       }
     };
     const response = await lambda(request);
+    console.log(response);
     this.setState({events: response.events, queryComplete: true});
   }
 
@@ -343,7 +349,7 @@ export default class MapComponent extends Component {
           hideNav={() => {
             setTimeout(() => this.toggleNav(), 300);
           }}
-          refreshMap={this.refresh}
+          refreshMap={this.resetMap}
         />
       </View>
     );

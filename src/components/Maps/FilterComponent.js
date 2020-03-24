@@ -29,7 +29,7 @@ export default class FilterComponent extends Component {
 
   resetFilter = () => {
     const filter = {
-      distanceRange: 1,
+      distanceRange: 10,
       startTime: Date.now(),
       endTime: Date.now() + 7 * 24 * 60 * 60 * 1000,
       keyword: ''
@@ -152,7 +152,7 @@ export default class FilterComponent extends Component {
             <TextInput
               style={styles.input}
               value={this.state.filter.distanceRange.toString()}
-              maxLength={2}
+              maxLength={3}
               onChangeText={(text) => this.setState({filter: {...this.state.filter, distanceRange: text}})}/>
             <Text style={styles.label}>
                 miles
@@ -249,9 +249,9 @@ const styles = StyleSheet.create({
     height: 40,
     fontSize: 18,
     paddingVertical: 0,
-    width: 30,
+    width: 38,
     color: '#139af2',
-    maxWidth: 30,
+    maxWidth: 38,
     borderBottomWidth: 1,
     borderColor: '#139af2',
     textAlign: 'center'
