@@ -60,6 +60,7 @@ export default class EventDetailComponents extends Component {
                     onPress: async () => {
                       this.deleteEvent();
                       this.props.navigation.goBack();
+                      //TODO fix refresh
                       this.props.route.params.refresh();
                     },
                   },

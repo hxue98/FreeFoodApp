@@ -1,5 +1,12 @@
 import React, {Component} from 'react';
-import {Image, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  BackHandler,
+} from 'react-native';
 import store from '../../redux/store';
 
 export default class MenuAccountComponent extends Component {
@@ -11,8 +18,17 @@ export default class MenuAccountComponent extends Component {
       userId = userId.substring(0, 7) + '...';
     }
     this.state = {
-      userId: userId
-    }
+      userId: userId,
+    };
+  }
+
+  handleBackButton = () => {
+    console.log('aaaa');
+    this.props.hideNav();
+  };
+
+  componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
   }
 
   render() {
@@ -34,17 +50,17 @@ export default class MenuAccountComponent extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 10
+    marginTop: 10,
   },
   imageAndUserNameView: {
     flexDirection: 'row',
   },
   userImage: {
-    marginLeft: 10
+    marginLeft: 10,
   },
   userNameText: {
     marginLeft: 10,
     alignSelf: 'center',
     fontSize: 18,
   },
-})
+});

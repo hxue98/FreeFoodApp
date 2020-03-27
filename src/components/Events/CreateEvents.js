@@ -8,7 +8,7 @@ import {
   Alert,
   Text,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import API, {graphqlOperation} from '@aws-amplify/api';
 import {createEvent} from '../../graphql/mutations';
@@ -58,7 +58,7 @@ export default class CreateEvents extends Component {
       chosenEndDate: '',
       address: '',
       currentLocation: null,
-      locationFetchComplete: false
+      locationFetchComplete: false,
     };
   }
 
@@ -139,7 +139,7 @@ export default class CreateEvents extends Component {
               },
             },
           },
-          locationFetchComplete: true
+          locationFetchComplete: true,
         });
       },
       error => {
@@ -291,11 +291,11 @@ export default class CreateEvents extends Component {
               />
             </TouchableOpacity>
           </View>
-          ) : (
-            <View style={styles.loading}>
-              <ActivityIndicator size="large" color="#0000ff" />
-            </View>
-          )}
+        ) : (
+          <View style={styles.loading}>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        )}
       </View>
     );
   }
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#139af2',
     width: '44%',
     paddingLeft: 3,
-    borderRadius: 5
+    borderRadius: 5,
   },
   btn: {
     width: 100,

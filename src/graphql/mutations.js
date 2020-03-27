@@ -20,6 +20,7 @@ export const createEvent = /* GraphQL */ `
       description
       downvote
       endTime
+      eventId
       latitude
       longitude
       posterId
@@ -108,6 +109,36 @@ export const deleteAccount = /* GraphQL */ `
     deleteAccount(input: $input) {
       userId
       password
+    }
+  }
+`;
+export const createFeedback = /* GraphQL */ `
+  mutation CreateFeedback($input: CreateFeedbackInput!) {
+    createFeedback(input: $input) {
+      feedbackId
+      feedback
+      contact
+      userId
+    }
+  }
+`;
+export const updateFeedback = /* GraphQL */ `
+  mutation UpdateFeedback($input: UpdateFeedbackInput!) {
+    updateFeedback(input: $input) {
+      feedbackId
+      feedback
+      contact
+      userId
+    }
+  }
+`;
+export const deleteFeedback = /* GraphQL */ `
+  mutation DeleteFeedback($input: DeleteFeedbackInput!) {
+    deleteFeedback(input: $input) {
+      feedbackId
+      feedback
+      contact
+      userId
     }
   }
 `;

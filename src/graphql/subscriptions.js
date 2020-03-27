@@ -172,3 +172,57 @@ export const onDeleteAccount = /* GraphQL */ `
     }
   }
 `;
+export const onCreateFeedback = /* GraphQL */ `
+  subscription OnCreateFeedback(
+    $feedbackId: String
+    $feedback: String
+    $contact: String
+  ) {
+    onCreateFeedback(
+      feedbackId: $feedbackId
+      feedback: $feedback
+      contact: $contact
+    ) {
+      feedbackId
+      feedback
+      contact
+      userId
+    }
+  }
+`;
+export const onUpdateFeedback = /* GraphQL */ `
+  subscription OnUpdateFeedback(
+    $feedbackId: String
+    $feedback: String
+    $contact: String
+  ) {
+    onUpdateFeedback(
+      feedbackId: $feedbackId
+      feedback: $feedback
+      contact: $contact
+    ) {
+      feedbackId
+      feedback
+      contact
+      userId
+    }
+  }
+`;
+export const onDeleteFeedback = /* GraphQL */ `
+  subscription OnDeleteFeedback(
+    $feedbackId: String
+    $feedback: String
+    $contact: String
+  ) {
+    onDeleteFeedback(
+      feedbackId: $feedbackId
+      feedback: $feedback
+      contact: $contact
+    ) {
+      feedbackId
+      feedback
+      contact
+      userId
+    }
+  }
+`;

@@ -41,7 +41,7 @@ export default class MapComponent extends Component {
       ),
       headerRight: () => (
         <View style={styles.headerRight}>
-          <FilterButtonComponent toggle={this.toggleFilter}/>
+          <FilterButtonComponent toggle={this.toggleFilter} />
           <TouchableOpacity
             style={styles.add}
             onPress={() => {
@@ -54,7 +54,6 @@ export default class MapComponent extends Component {
             />
           </TouchableOpacity>
         </View>
-
       ),
     });
     super(props);
@@ -72,43 +71,45 @@ export default class MapComponent extends Component {
         distanceRange: 10,
         startTime: Date.now(),
         endTime: Date.now() + 7 * 24 * 60 * 60 * 1000,
-        keyword: ''
-      }
+        keyword: '',
+      },
     };
   }
 
   toggleFilter = () => {
     this.setState({showFilter: !this.state.showFilter});
-  }
+  };
 
-  applyFilter = (newfilter) => {
+  applyFilter = newfilter => {
     this.state.filter = newfilter;
     this.refresh();
-  }
+  };
 
   resetFilter = () => {
-    this.setState({filter: {
-      distanceRange: 10,
-      startTime: Date.now(),
-      endTime: Date.now() + 7 * 24 * 60 * 60 * 1000,
-      keyword: ''
-    }});
-  }
+    this.setState({
+      filter: {
+        distanceRange: 10,
+        startTime: Date.now(),
+        endTime: Date.now() + 7 * 24 * 60 * 60 * 1000,
+        keyword: '',
+      },
+    });
+  };
 
   resetMap = () => {
     this.resetFilter();
     this.refresh();
-  }
+  };
 
   toggleNav = () => {
     this.setState({showNav: !this.state.showNav});
-  }
+  };
 
   hideAll = () => {
     this.setState({showNav: false});
     this.setState({showFilter: false});
     this.setState({eventDetail: null});
-  }
+  };
 
   getCurrentLocation() {
     Geolocation.getCurrentPosition(
@@ -147,7 +148,7 @@ export default class MapComponent extends Component {
         this.getCurrentLocation();
       }
     }
-  }
+  };
 
   refresh = async () => {
     this.setState({queryComplete: false});
@@ -156,13 +157,13 @@ export default class MapComponent extends Component {
       params: {
         filter: this.state.filter,
         latitude: this.state.initLocation.latitude,
-        longitude: this.state.initLocation.longitude
-      }
+        longitude: this.state.initLocation.longitude,
+      },
     };
     const response = await lambda(request);
     console.log(response);
     this.setState({events: response.events, queryComplete: true});
-  }
+  };
 
   async componentDidMount() {
     this.requestLocationPermission();
@@ -193,7 +194,7 @@ export default class MapComponent extends Component {
 
   navigateToComment = eventId => {
     this.props.navigation.navigate('Comments', {eventId: eventId});
-  }
+  };
 
   render() {
     const component =
@@ -326,12 +327,13 @@ export default class MapComponent extends Component {
             </Animatable.View>
           )}
 
-
-        {
-          this.state.showFilter && (
-            <FilterComponent filter={this.state.filter} onApplyFilter={this.applyFilter} toggle={this.toggleFilter}/>
-          )
-        }
+          {this.state.showFilter && (
+            <FilterComponent
+              filter={this.state.filter}
+              onApplyFilter={this.applyFilter}
+              toggle={this.toggleFilter}
+            />
+          )}
         </View>
       ) : (
         <View style={styles.loading}>
@@ -360,7 +362,7 @@ const window = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   headerRight: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   container: {
     height: window.height,
@@ -426,7 +428,7 @@ const styles = StyleSheet.create({
   },
   add: {
     alignSelf: 'center',
-    right: 5
+    right: 5,
   },
   addImage: {
     width: 45,
