@@ -36,13 +36,13 @@ export default class SidePaneComponent extends Component {
             animation="slideInLeft"
             duration={500}
             ref={this.handleViewRef}>
-            <MenuAccountComponent navigation={this.props.navigation} />
+            <MenuAccountComponent navigation={this.props.navigation} onNavigate={this.props.hideAll} />
             <Divider style={styles.divider} />
-            <MenuMapsComponent hideNav={this.hide} refreshMap={this.props.refreshMap}/>
+            <MenuMapsComponent hideNav={this.hide} refreshMap={this.props.refreshMap} />
             <Divider style={{...styles.divider, marginTop: 0}} />
-            <MenuMyListComponent navigation={this.props.navigation} />
+            <MenuMyListComponent navigation={this.props.navigation} onNavigate={this.props.hideAll} />
             <Divider style={styles.divider} />
-            <MenuSettingsComponent navigation={this.props.navigation} />
+            <MenuSettingsComponent navigation={this.props.navigation} onNavigate={this.props.hideAll} />
             <Divider style={styles.divider} />
             <MenuLogoutComponent navigation={this.props.navigation} />
             <Divider style={styles.divider} />

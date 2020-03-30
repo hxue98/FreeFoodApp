@@ -11,7 +11,7 @@ export default class MenuMyListComponent extends Component {
       <View style={styles.container}>
         <TouchableOpacity
           style={styles.btn}
-          onPress={() => this.props.navigation.navigate('MyEvents')}>
+          onPress={() => {this.props.navigation.navigate('MyEvents'); this.props.onNavigate();}}>
           <Image
             style={styles.image}
             source={require('../../res/images/list-64.png')}

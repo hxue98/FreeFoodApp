@@ -27,7 +27,7 @@ export default class MenuAccountComponent extends Component {
       <View style={styles.container}>
         <TouchableOpacity
           style={styles.imageAndUserNameView}
-          onPress={() => this.props.navigation.navigate('MyAccount')}>
+          onPress={() => {this.props.navigation.navigate('MyAccount'); this.props.onNavigate();}}>
           <Image
             style={styles.userImage}
             source={require('../../res/images/user-64.png')}

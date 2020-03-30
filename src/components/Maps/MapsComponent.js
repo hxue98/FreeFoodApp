@@ -98,6 +98,7 @@ export default class MapComponent extends Component {
 
   resetMap = () => {
     this.resetFilter();
+    this.setState({showFilter: false});
     this.refresh();
   };
 
@@ -351,6 +352,7 @@ export default class MapComponent extends Component {
             setTimeout(() => this.toggleNav(), 300);
           }}
           refreshMap={this.resetMap}
+          hideAll={this.hideAll}
         />
       </View>
     );

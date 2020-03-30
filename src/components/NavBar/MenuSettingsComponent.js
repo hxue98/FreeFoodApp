@@ -11,7 +11,7 @@ export default class MenuSettingsComponent extends Component {
       <View style={styles.container}>
         <TouchableOpacity
           style={styles.btn}
-          onPress={() => this.props.navigation.navigate('Settings')}>
+          onPress={() => {this.props.navigation.navigate('Settings'); this.props.onNavigate();}}>
           <Image
             style={styles.image}
             source={require('../../res/images/settings-64.png')}

@@ -88,7 +88,7 @@ export default class FilterComponent extends Component {
       <Animatable.View
         style={styles.filterContainer}
         animation="fadeIn"
-        duration={500}>
+        duration={300}>
         <Image
           style={styles.filterTriangle}
           source={require('../../res/images/filter-triangle.png')}>
