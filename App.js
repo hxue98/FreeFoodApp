@@ -45,10 +45,22 @@ export default function App() {
           />
           <Stack.Screen name="Detail" component={LocationDetailComponent} />
           <Stack.Screen name="Comments" component={CommentComponent} />
-          <Stack.Screen name="CreateEvents" component={CreateEvents} />
-          <Stack.Screen name="MyAccount" component={MyAccount} />
-          <Stack.Screen name="MyEvents" component={MyEvents} />
-          <Stack.Screen name="EventDetail" component={EventDetail} />
+          <Stack.Screen name="CreateEvents"
+            component={CreateEvents}
+            options={{title: 'Create a new event'}}
+          />
+          <Stack.Screen name="MyAccount"
+            component={MyAccount}
+            options={{title: 'My Account'}}
+          />
+          <Stack.Screen name="MyEvents"
+            component={MyEvents}
+            options={{title: 'My Events'}}
+          />
+          <Stack.Screen name="EventDetail"
+            component={EventDetail}
+            options={{title: 'Event Detail'}}
+          />
           <Stack.Screen name="Settings" component={Settings} />
           <Stack.Screen name="Feedback" component={Feedback} />
         </Stack.Navigator>

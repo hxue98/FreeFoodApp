@@ -34,7 +34,7 @@ export default class MyAccountComponent extends Component {
             style={styles.iconImage}
             source={require('../../res/images/list-64.png')}
           />
-          <Text style={styles.iconText}>My Lists</Text>
+          <Text style={styles.iconText}>My Events</Text>
           <Image
             style={styles.iconArrow}
             source={require('../../res/images/circled-right-64.png')}
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     marginTop: 20,
-    right: 25,
+    right: 20,
     position: 'absolute',
   },
   divider: {

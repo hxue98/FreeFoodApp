@@ -35,14 +35,13 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 25,
     flexDirection: 'row',
-    height: 60,
     width: '100%',
     alignSelf: 'center',
     borderBottomWidth: 1,
     borderColor: '#a6a6a6',
   },
   timeView: {
-    width: 50,
+    width: '13%',
     height: 55,
     marginLeft: 2,
     flexDirection: 'row',
@@ -56,20 +55,12 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginLeft: 10,
   },
-  username: {
-    flex: 0.5,
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-
   descriptionView: {
     marginLeft: 40,
     marginTop: 5,
-    // marginRight: 100,
-    backgroundColor: '#e6e6e6',
-    // backgroundColor: 'red',
+    backgroundColor: '#e6e6e655',
     height: 25,
-    width: 300,
+    width: '75%',
   },
   description: {
     fontSize: 17,

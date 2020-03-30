@@ -74,22 +74,20 @@ export default class MyAccountComponent extends Component {
         <FlatList
           data={this.state.events.sort((a, b) => b.date - a.date)}
           renderItem={({item}) => (
-            <View>
-              <EventLineComponent
-                address={item.address}
-                navigate={this.props.navigation.navigate}
-                id={item.eventId}
-                eventId={item.eventId}
-                description={item.description}
-                time={
-                  new Date(item.startTime).toLocaleTimeString() +
-                  new Date(item.startTime).toLocaleDateString()
-                }
-                date={new Date(item.startTime).getDate()}
-                month={monthNames[new Date(item.startTime).getMonth()]}
-                refresh={this.getUserEvents}
-              />
-            </View>
+            <EventLineComponent
+              address={item.address}
+              navigate={this.props.navigation.navigate}
+              id={item.eventId}
+              eventId={item.eventId}
+              description={item.description}
+              time={
+                new Date(item.startTime).toLocaleTimeString() +
+                new Date(item.startTime).toLocaleDateString()
+              }
+              date={new Date(item.startTime).getDate()}
+              month={monthNames[new Date(item.startTime).getMonth()]}
+              refresh={this.getUserEvents}
+            />
           )}
           style={styles.list}
           scrollEnabled={true}
