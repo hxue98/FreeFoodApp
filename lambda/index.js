@@ -178,12 +178,12 @@ async function getEvents(filter, lat, lon) {
 
 function filterEvent(event, lat, lon, filter) {
     return event.startTime > filter.startTime &&
-           event.startTime < filter.endTime &&
-           haversine({latitude: event.latitude, longitude: event.longitude},
+        event.startTime < filter.endTime &&
+        haversine({latitude: event.latitude, longitude: event.longitude},
             {latitude: lat, longitude: lon},
             {threshold: filter.distanceRange, unit: 'mile'}
-           ) &&
-           event.description.includes(filter.keyword);
+        ) &&
+        event.description.includes(filter.keyword);
 }
 
 async function getUserEvents(userId) {
@@ -202,10 +202,10 @@ async function getUserEvents(userId) {
 
 async function deleteEvent(eventId) {
     var params = {
-      TableName : 'Event',
-      Key: {
-        eventId: eventId
-      }
+        TableName : 'Event',
+        Key: {
+            eventId: eventId
+        }
     };
 
     await db.delete(params, function(err, data) {

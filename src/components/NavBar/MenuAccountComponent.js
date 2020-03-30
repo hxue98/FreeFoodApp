@@ -22,15 +22,6 @@ export default class MenuAccountComponent extends Component {
     };
   }
 
-  handleBackButton = () => {
-    console.log('aaaa');
-    this.props.hideNav();
-  };
-
-  componentDidMount() {
-    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
-  }
-
   render() {
     return (
       <View style={styles.container}>

@@ -161,7 +161,6 @@ export default class MapComponent extends Component {
       },
     };
     const response = await lambda(request);
-    console.log(response);
     this.setState({events: response.events, queryComplete: true});
   };
 

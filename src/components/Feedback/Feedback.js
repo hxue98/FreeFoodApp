@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {
   TextInput,
-  Image,
   StyleSheet,
   View,
   Text,
@@ -59,8 +58,8 @@ export default class Feedback extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.feedbackTextView}>
-          <Text style={{marginLeft: 20, fontSize: 18}}>Feedback</Text>
-          <Text style={{marginLeft: 250, fontSize: 18}}>
+          <Text style={{marginLeft: '5%', fontSize: 18}}>Feedback</Text>
+          <Text style={{marginLeft: '57%', fontSize: 18}}>
             {this.state.feedback.length + '/200'}
           </Text>
         </View>
@@ -71,8 +70,7 @@ export default class Feedback extends Component {
             textAlignVertical={'top'}
             underlineColorAndroid={'transparent'}
             maxLength={200}
-            placeholder="Describe your issue using at least 10 
-            characters so that we can help troubleshoot your issue more quickly"
+            placeholder="Describe your issue so that we can help troubleshoot it more quickly"
             onChangeText={text => this.setState({feedback: text})}
             value={this.state.feedback}
           />
@@ -107,13 +105,13 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     height: '100%',
-    marginTop: 25,
   },
   feedbackTextView: {
+    marginTop: 15,
     flexDirection: 'row',
   },
   textInputView: {
-    height: 95,
+    height: 125,
     width: '95%',
     backgroundColor: 'white',
     alignSelf: 'center',
@@ -125,15 +123,15 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   btn: {
-    marginTop: 35,
+    marginTop: 45,
     width: 150,
-    marginLeft: 130,
-    borderRadius: 35,
+    alignSelf: 'center',
   },
   contactView: {
     width: '95%',
-    height: 50,
+    height: 45,
     backgroundColor: 'white',
     alignSelf: 'center',
+    marginTop: 6,
   },
 });
