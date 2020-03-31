@@ -20,13 +20,13 @@ export const getEvent = /* GraphQL */ `
       description
       downvote
       endTime
-      address
       eventId
       latitude
       longitude
       posterId
       startTime
       upvote
+      address
     }
   }
 `;
@@ -61,13 +61,13 @@ export const listEvents = /* GraphQL */ `
         description
         downvote
         endTime
-        address
         eventId
         latitude
         longitude
         posterId
         startTime
         upvote
+        address
       }
       nextToken
     }
@@ -91,6 +91,33 @@ export const listAccounts = /* GraphQL */ `
       items {
         userId
         password
+      }
+      nextToken
+    }
+  }
+`;
+export const getFeedback = /* GraphQL */ `
+  query GetFeedback($feedbackId: String!) {
+    getFeedback(feedbackId: $feedbackId) {
+      feedbackId
+      feedback
+      contact
+      userId
+    }
+  }
+`;
+export const listFeedbacks = /* GraphQL */ `
+  query ListFeedbacks(
+    $filter: TableFeedbackFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listFeedbacks(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        feedbackId
+        feedback
+        contact
+        userId
       }
       nextToken
     }

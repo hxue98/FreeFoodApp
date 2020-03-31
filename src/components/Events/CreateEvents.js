@@ -27,7 +27,6 @@ async function createNewEvents(
   address,
 ) {
   const event = {
-    eventId: 0,
     posterId: posterId,
     description: text,
     startTime: startTime,
@@ -164,7 +163,7 @@ export default class CreateEvents extends Component {
         this.state.address,
       ).catch(err => console.error(err));
       if (res) {
-        this.props.navigation.replace('maps');
+        this.props.navigation.replace('Maps');
       } else {
         Alert.alert('Error', 'Invalid Start time or End time or Description');
       }

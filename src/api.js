@@ -1,6 +1,6 @@
 export default async function lambda(body) {
     const request = new Request(
-        'https://0nw5r882o8.execute-api.us-east-1.amazonaws.com/api',
+        'https://0nw5r882o8.execute-api.us-east-1.amazonaws.com/DemoEndpoint',
         {
             method: 'POST',
             headers: {
