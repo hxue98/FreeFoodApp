@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import API, {graphqlOperation} from '@aws-amplify/api';
 import {updateComment} from '../../graphql/mutations';
+import store from '../../redux/store';
 
 export default class CommentLineComponent extends Component {
   constructor(props) {
@@ -17,6 +18,7 @@ export default class CommentLineComponent extends Component {
     this.state = {
       upvote: props.upvote,
       downvote: props.downvote,
+      isUser: props.username === store.getState().userId,
     };
   }
 
@@ -31,34 +33,39 @@ export default class CommentLineComponent extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={{...styles.container, left: !this.state.isUser ? 0 : '26%'}}>
         <Text style={styles.username}>{this.props.username}</Text>
-        <Text style={styles.comment}>{this.props.text}</Text>
-        <View style={styles.bottomRow}>
-          <Text style={styles.date}>{this.props.date}</Text>
-          <View style={styles.vote}>
-            <TouchableOpacity
-              onPress={() => {
-                this.updateVote(this.state.upvote + 1, this.state.downvote);
-                this.setState({upvote: this.state.upvote + 1});
-              }}>
-              <Image
-                style={styles.thumbsUp}
-                source={require('../../res/images/thumbs-up.png')}
-              />
-            </TouchableOpacity>
-            <Text style={{paddingRight: 5}}> {this.state.upvote}</Text>
-            <TouchableOpacity
-              onPress={() => {
-                this.updateVote(this.state.upvote, this.state.downvote + 1);
-                this.setState({downvote: this.state.downvote + 1});
-              }}>
-              <Image
-                style={styles.thumbsUp}
-                source={require('../../res/images/thumbs-down.png')}
-              />
-            </TouchableOpacity>
-            <Text> {this.state.downvote}</Text>
+        <View style={styles.textContainer}>
+          <Text style={styles.comment}>{this.props.text}</Text>
+          <View style={styles.bottomRow}>
+            <Text style={styles.date}>{this.props.date}</Text>
+            {
+              !this.state.isUser && (
+              <View style={styles.vote}>
+                <TouchableOpacity
+                  onPress={() => {
+                    this.updateVote(this.state.upvote + 1, this.state.downvote);
+                    this.setState({upvote: this.state.upvote + 1});
+                  }}>
+                  <Image
+                    style={styles.thumbsUp}
+                    source={require('../../res/images/thumbs-up.png')}
+                  />
+                </TouchableOpacity>
+                <Text style={{paddingRight: 5}}> {this.state.upvote}</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    this.updateVote(this.state.upvote, this.state.downvote + 1);
+                    this.setState({downvote: this.state.downvote + 1});
+                  }}>
+                  <Image
+                    style={styles.thumbsUp}
+                    source={require('../../res/images/thumbs-down.png')}
+                  />
+                </TouchableOpacity>
+                <Text> {this.state.downvote}</Text>
+              </View>)
+            }
           </View>
         </View>
       </View>
@@ -66,16 +73,21 @@ export default class CommentLineComponent extends Component {
   }
 }
 
-const window = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {
-    height: 180,
-    width: '98%',
-    alignSelf: 'center',
-    borderBottomWidth: 1,
-    borderColor: '#a6a6a6',
+    marginTop: 15,
+    marginLeft: '2%',
+    width: '70%',
+  },
+  textContainer: {
+    backgroundColor: '#a6a6a655',
+    borderRadius: 15,
+    paddingHorizontal: 10,
+    paddingTop: 10,
+    paddingBottom: 5
   },
   username: {
+    marginLeft: 5,
     flex: 0.5,
     fontWeight: 'bold',
     fontSize: 16,
@@ -86,6 +98,7 @@ const styles = StyleSheet.create({
   },
   bottomRow: {
     flex: 0.5,
+    marginTop: 5,
     flexDirection: 'row',
   },
   date: {

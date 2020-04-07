@@ -45,7 +45,7 @@ export default class CommentComponent extends Component {
     const component = this.state.queryComplete ? (
       <View>
         <FlatList
-          data={this.state.data.sort((a, b) => b.date - a.date)}
+          data={this.state.data.sort((a, b) => a.date - b.date)}
           renderItem={({item}) => (
             <View>
               <CommentLineComponent
@@ -83,7 +83,6 @@ export default class CommentComponent extends Component {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    justifyContent: 'center',
     flex: 1,
     marginTop: 3,
     marginBottom: 3,
