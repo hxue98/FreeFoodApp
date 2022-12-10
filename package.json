@@ -36,7 +36,7 @@
     "react-native-gesture-handler": "^1.6.0",
     "react-native-google-autocomplete": "^0.1.8",
     "react-native-google-maps-directions": "^2.1.1",
-    "react-native-google-places-autocomplete": "^1.4.1",
+    "react-native-google-places-autocomplete": "^1.9.0",
     "react-native-maps": "0.26.1",
     "react-native-modal-datetime-picker": "^8.5.1",
     "react-native-permissions": "^2.0.10",
